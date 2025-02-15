@@ -5,6 +5,9 @@ class World {
         this.player = new Sprite(width/2, height/2, 32, 32, 'blue');
         this.entities = [];
         this.walls = [];
+        this.items = [];
+        this.inventory = new Array(5).fill(null);
+        this.selectedInventorySlot = -1;
         
         // Grid position (0,0 is top-left, 2,2 is bottom-right)
         this.gridX = 1;
@@ -20,11 +23,21 @@ class World {
 
     loadCurrentRoom() {
         this.walls = [];
+        this.items = [];
         const roomLayout = World.rooms[this.gridY][this.gridX];
         
         // Calculate offset to center the room
         const offsetX = (this.width - (10 * this.cellSize)) / 2;
         const offsetY = (this.height - (10 * this.cellSize)) / 2;
+
+        // Add some random items to the room
+        const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];
+        for (let i = 0; i < 3; i++) {
+            const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
+            const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
+            const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            this.items.push(new Item(x, y, type));
+        }
         
         for (let y = 0; y < roomLayout.length; y++) {
             for (let x = 0; x < roomLayout[y].length; x++) {
@@ -88,6 +101,16 @@ class World {
         if (World.keys.ArrowUp) this.player.move(0, -1);
         if (World.keys.ArrowDown) this.player.move(0, 1);
 
+        // Handle inventory selection
+        if (World.keys['1']) this.selectedInventorySlot = 0;
+        if (World.keys['2']) this.selectedInventorySlot = 1;
+        if (World.keys['3']) this.selectedInventorySlot = 2;
+        if (World.keys['4']) this.selectedInventorySlot = 3;
+        if (World.keys['5']) this.selectedInventorySlot = 4;
+
+        // Check for item pickup
+        this.checkItemPickup();
+
         // Resolve any collisions that occurred during movement
         this.resolveCollisions(this.player);
 
@@ -124,6 +147,9 @@ class World {
         // Draw all entities
         this.entities.forEach(entity => entity.draw(ctx));
         
+        // Draw items
+        this.items.forEach(item => item.draw(ctx));
+        
         // Draw player
         this.player.draw(ctx);
 
@@ -131,6 +157,9 @@ class World {
         ctx.fillStyle = 'black';
         ctx.font = '24px Arial';
         ctx.fillText(`Screen: ${this.gridX},${this.gridY}`, 10, 30);
+
+        // Draw inventory
+        this.drawInventory(ctx);
     }
 }
 
@@ -208,3 +237,67 @@ World.rooms = [
         World.generateRoom(2, 2)
     ]
 ];
+    drawInventory(ctx) {
+        const slotSize = 40;
+        const padding = 10;
+        const startX = this.width - (slotSize + padding) * 5 - padding;
+        const startY = this.height - slotSize - padding;
+
+        // Draw inventory slots
+        for (let i = 0; i < 5; i++) {
+            const x = startX + (slotSize + padding) * i;
+            ctx.fillStyle = i === this.selectedInventorySlot ? '#aaa' : '#ddd';
+            ctx.fillRect(x, startY, slotSize, slotSize);
+            ctx.strokeStyle = '#333';
+            ctx.strokeRect(x, startY, slotSize, slotSize);
+
+            // Draw item if slot is filled
+            if (this.inventory[i]) {
+                ctx.fillStyle = this.inventory[i].color;
+                const itemSize = slotSize * 0.6;
+                const itemX = x + (slotSize - itemSize) / 2;
+                const itemY = startY + (slotSize - itemSize) / 2;
+                ctx.fillRect(itemX, itemY, itemSize, itemSize);
+                
+                // Draw item label
+                ctx.fillStyle = 'black';
+                ctx.font = '12px Arial';
+                ctx.fillText(this.inventory[i].type[0], itemX + itemSize/3, itemY + itemSize/1.5);
+            }
+
+            // Draw slot number
+            ctx.fillStyle = 'black';
+            ctx.font = '12px Arial';
+            ctx.fillText(i + 1, x + 5, startY + slotSize - 5);
+        }
+    }
+
+    checkItemPickup() {
+        if (this.selectedInventorySlot === -1) return;
+
+        const playerBounds = this.player.getBounds();
+        for (let i = this.items.length - 1; i >= 0; i--) {
+            const item = this.items[i];
+            if (this.intersects(playerBounds, item.getBounds())) {
+                // If selected slot has an item, drop it
+                if (this.inventory[this.selectedInventorySlot]) {
+                    const oldItem = this.inventory[this.selectedInventorySlot];
+                    oldItem.x = this.player.x;
+                    oldItem.y = this.player.y;
+                    this.items.push(oldItem);
+                }
+                
+                // Pick up new item
+                this.inventory[this.selectedInventorySlot] = item;
+                this.items.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    intersects(bounds1, bounds2) {
+        return !(bounds1.left >= bounds2.right || 
+                bounds1.right <= bounds2.left || 
+                bounds1.top >= bounds2.bottom ||
+                bounds1.bottom <= bounds2.top);
+    }
