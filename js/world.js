@@ -8,15 +8,15 @@ class World {
         this.items = [];
         this.inventory = new Array(5).fill(null);
         this.itemPrompt = null;
-        
+
         // Grid position (0,0 is top-left, 2,2 is bottom-right)
         this.gridX = 1;
         this.gridY = 1;
-        
+
         // Room layout properties
         this.cellSize = Math.min(this.width, this.height) / 10;  // Scale cells to smallest canvas dimension
         this.loadCurrentRoom();
-        
+
         // Resolve any initial collisions
         this.resolveCollisions(this.player);
     }
@@ -25,7 +25,7 @@ class World {
         this.walls = [];
         this.items = [];
         const roomLayout = World.rooms[this.gridY][this.gridX];
-        
+
         // Calculate offset to center the room
         const offsetX = (this.width - (10 * this.cellSize)) / 2;
         const offsetY = (this.height - (10 * this.cellSize)) / 2;
@@ -38,7 +38,7 @@ class World {
             const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
             this.items.push(new Item(x, y, type));
         }
-        
+
         for (let y = 0; y < roomLayout.length; y++) {
             for (let x = 0; x < roomLayout[y].length; x++) {
                 if (roomLayout[y][x] === '#') {
@@ -62,11 +62,11 @@ class World {
 
     resolveCollisions(sprite) {
         const collisions = this.checkCollisions(sprite);
-        
+
         for (const wall of collisions) {
             const spriteBox = sprite.getBounds();
             const wallBox = wall.getBounds();
-            
+
             // Calculate overlap on each axis
             const overlapX = Math.min(spriteBox.right - wallBox.left, wallBox.right - spriteBox.left);
             const overlapY = Math.min(spriteBox.bottom - wallBox.top, wallBox.bottom - spriteBox.top);
@@ -138,16 +138,16 @@ class World {
     draw(ctx) {
         // Clear the canvas
         ctx.clearRect(0, 0, this.width, this.height);
-        
+
         // Draw walls
         this.walls.forEach(wall => wall.draw(ctx));
-        
+
         // Draw all entities
         this.entities.forEach(entity => entity.draw(ctx));
-        
+
         // Draw items
         this.items.forEach(item => item.draw(ctx));
-        
+
         // Draw player
         this.player.draw(ctx);
 
@@ -161,7 +161,7 @@ class World {
 
         // Draw item prompt if active
         if (this.itemPrompt) {
-            this.itemPrompt.draw(ctx, 
+            this.itemPrompt.draw(ctx,
                 (this.width - 300) / 2,
                 (this.height - 180) / 2
             );
@@ -199,7 +199,7 @@ World.generateRoom = function(x, y) {
     // Add doors based on position (wider doors)
     const doorWidth = 3;
     const doorPos = Math.floor((room.length - doorWidth) / 2);
-    
+
     if (x > 0) { // Left door
         for (let i = 0; i < doorWidth; i++) {
             room[doorPos + i][0] = ' ';
@@ -266,7 +266,7 @@ World.prototype.drawInventory = function(ctx) {
                 const itemX = x + (slotSize - itemSize) / 2;
                 const itemY = startY + (slotSize - itemSize) / 2;
                 ctx.fillRect(itemX, itemY, itemSize, itemSize);
-                
+
                 // Draw item label
                 ctx.fillStyle = 'black';
                 ctx.font = '12px Arial';
@@ -305,7 +305,7 @@ World.prototype.handleInput = function(key) {
                         oldItem.y = this.player.y;
                         this.items.push(oldItem);
                     }
-                    
+
                     // Pick up new item
                     this.inventory[result.slot] = this.currentItem;
                     this.items.splice(this.currentItemIndex, 1);
@@ -317,8 +317,8 @@ World.prototype.handleInput = function(key) {
     }
 
 World.prototype.intersects = function(bounds1, bounds2) {
-        return !(bounds1.left >= bounds2.right || 
-                bounds1.right <= bounds2.left || 
+        return !(bounds1.left >= bounds2.right ||
+                bounds1.right <= bounds2.left ||
                 bounds1.top >= bounds2.bottom ||
                 bounds1.bottom <= bounds2.top);
     }
