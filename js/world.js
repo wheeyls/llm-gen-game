@@ -304,17 +304,19 @@ World.prototype.handleInput = function(key) {
                     return;
                 } else if (result) {
                     if (result.action === 'confirm') {
-                        // If selected slot has an item, drop it
-                        if (this.inventory[result.slot]) {
-                            const oldItem = this.inventory[result.slot];
+                        // Store the old item if there is one
+                        const oldItem = this.inventory[result.slot];
+                        
+                        // Pick up new item
+                        this.inventory[result.slot] = this.state.stateData.item;
+                        this.items.splice(this.state.stateData.itemIndex, 1);
+
+                        // Drop the old item if there was one
+                        if (oldItem) {
                             oldItem.x = this.player.x;
                             oldItem.y = this.player.y;
                             this.items.push(oldItem);
                         }
-
-                        // Pick up new item
-                        this.inventory[result.slot] = this.state.stateData.item;
-                        this.items.splice(this.state.stateData.itemIndex, 1);
                     }
                     
                     // Return to exploring state
