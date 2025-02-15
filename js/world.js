@@ -18,6 +18,9 @@ class World {
         // Room layout properties
         this.cellSize = Math.min(this.width, this.height) / 10;  // Scale cells to smallest canvas dimension
         
+        // Initialize room items storage
+        this.roomItems = {};
+        
         // Scatter items across all rooms once at the start
         this.scatterInitialItems();
         
@@ -35,6 +38,10 @@ class World {
         // Calculate offset to center the room
         const offsetX = (this.width - (10 * this.cellSize)) / 2;
         const offsetY = (this.height - (10 * this.cellSize)) / 2;
+
+        // Load items for current room
+        const roomKey = `${this.gridX},${this.gridY}`;
+        this.items = this.roomItems[roomKey] || [];
 
         for (let y = 0; y < roomLayout.length; y++) {
             for (let x = 0; x < roomLayout[y].length; x++) {
@@ -308,9 +315,16 @@ World.prototype.handleInput = function(key) {
                     if (result.action === 'confirm') {
                         // Store the old item if there is one
                         const oldItem = this.inventory[result.slot];
-                        
+                    
                         // Pick up new item
                         this.inventory[result.slot] = this.state.stateData.item;
+                    
+                        // Remove item from current room's items
+                        const roomKey = `${this.gridX},${this.gridY}`;
+                        const itemIndex = this.roomItems[roomKey].indexOf(this.state.stateData.item);
+                        if (itemIndex !== -1) {
+                            this.roomItems[roomKey].splice(itemIndex, 1);
+                        }
                         this.items.splice(this.state.stateData.itemIndex, 1);
 
                         // Drop the old item if there was one
@@ -318,6 +332,7 @@ World.prototype.handleInput = function(key) {
                             // Drop item slightly to the right and down from player
                             oldItem.x = this.player.x + this.player.width + 10;
                             oldItem.y = this.player.y + this.player.height + 10;
+                            this.roomItems[roomKey].push(oldItem);
                             this.items.push(oldItem);
                         }
                     } else if (result.action === 'cancel') {
