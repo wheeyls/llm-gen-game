@@ -254,7 +254,7 @@ World.prototype.drawInventory = function(ctx) {
         // Draw inventory slots
         for (let i = 0; i < 5; i++) {
             const x = startX + (slotSize + padding) * i;
-            ctx.fillStyle = i === this.selectedInventorySlot ? '#aaa' : '#ddd';
+            ctx.fillStyle = (this.itemPrompt && i === this.itemPrompt.selectedSlot) ? '#aaa' : '#ddd';
             ctx.fillRect(x, startY, slotSize, slotSize);
             ctx.strokeStyle = '#333';
             ctx.strokeRect(x, startY, slotSize, slotSize);
@@ -299,7 +299,10 @@ World.prototype.handleInput = function(key) {
         switch (this.state.current) {
             case GameState.ITEM_PROMPT:
                 const result = this.itemPrompt.handleInput(key);
-                if (result) {
+                if (result && result.action === 'select') {
+                    // Just update the visual selection
+                    return;
+                } else if (result) {
                     if (result.action === 'confirm') {
                         // If selected slot has an item, drop it
                         if (this.inventory[result.slot]) {
