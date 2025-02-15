@@ -39,6 +39,13 @@ class ItemPrompt {
             this.selectedSlot = Math.min(4, this.selectedSlot + 1);
             return { action: 'select', slot: this.selectedSlot };
         }
+        // Number key shortcuts (1-5)
+        if (key >= '1' && key <= '5') {
+            const slot = parseInt(key) - 1;
+            this.selectedSlot = slot;
+            this.visible = false;
+            return { action: 'confirm', slot: slot };
+        }
         if (key === 'Enter') {
             this.visible = false;
             return { action: 'confirm', slot: this.selectedSlot };
