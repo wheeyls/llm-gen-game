@@ -6,6 +6,7 @@ class TransitionWorld {
         this.characters = {};
         this.activeCharacter = null;
         this.backgroundColor = '#FDF6E3'; // Wes Anderson warm background
+        this.parallax = new ParallaxTransition(width, height);
         
         this.currentDialog = new Dialog(
             "Welcome to the transition sequence.",
@@ -47,28 +48,43 @@ class TransitionWorld {
         };
     }
 
-    update() {
-        // Handle any continuous updates if needed
+    update(deltaTime) {
+        // Update parallax transition
+        if (this.parallax.update(deltaTime)) {
+            // Transition complete, update dialog
+            this.nextDialogState.complete();
+        }
     }
 
     handleInput(key) {
+        if (this.parallax.isTransitioning) return;
+
         const result = this.currentDialog.handleInput(key);
         if (result) {
-            if (result.nextDialog === "finish") {
-                this.onComplete();
-            } else if (result.nextDialog === null) {
-                // Go back to first dialog
-                this.currentDialog = new Dialog(
-                    "Welcome to the transition sequence.",
-                    [
-                        { text: "I seek power", nextDialog: "power" },
-                        { text: "I seek wisdom", nextDialog: "wisdom" },
-                        { text: "Let's just explore", nextDialog: "explore" }
-                    ]
-                );
-            } else {
-                this.currentDialog = this.dialogs[result.nextDialog];
-            }
+            const goingBack = result.nextDialog === null;
+            this.parallax.startTransition(!goingBack);
+            
+            // Store next dialog state
+            this.nextDialogState = {
+                result: result,
+                complete: () => {
+                    if (result.nextDialog === "finish") {
+                        this.onComplete();
+                    } else if (result.nextDialog === null) {
+                        // Go back to first dialog
+                        this.currentDialog = new Dialog(
+                            "Welcome to the transition sequence.",
+                            [
+                                { text: "I seek power", nextDialog: "power" },
+                                { text: "I seek wisdom", nextDialog: "wisdom" },
+                                { text: "Let's just explore", nextDialog: "explore" }
+                            ]
+                        );
+                    } else {
+                        this.currentDialog = this.dialogs[result.nextDialog];
+                    }
+                }
+            };
         }
     }
 
@@ -77,7 +93,10 @@ class TransitionWorld {
         ctx.fillStyle = this.backgroundColor;
         ctx.fillRect(0, 0, this.width, this.height);
         
-        // Draw decorative elements (symmetric patterns typical in Wes Anderson)
+        // Draw parallax elements
+        this.parallax.draw(ctx);
+        
+        // Draw decorative elements
         this.drawDecorations(ctx);
         
         // Draw all characters
