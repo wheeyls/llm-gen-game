@@ -237,7 +237,6 @@ World.rooms = [
         World.generateRoom(2, 2)
     ]
 ];
-}
 
 // Add instance methods to World prototype
 World.prototype.drawInventory = function(ctx) {
