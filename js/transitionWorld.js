@@ -3,6 +3,9 @@ class TransitionWorld {
         this.width = width;
         this.height = height;
         this.onComplete = onComplete;
+        this.characters = {};
+        this.activeCharacter = null;
+        this.backgroundColor = '#FDF6E3'; // Wes Anderson warm background
         
         this.currentDialog = new Dialog(
             "Welcome to the transition sequence.",
@@ -70,14 +73,47 @@ class TransitionWorld {
     }
 
     draw(ctx) {
-        // Clear the canvas
-        ctx.fillStyle = '#2c3e50';  // Wes Anderson inspired background color
+        // Clear the canvas with Wes Anderson style background
+        ctx.fillStyle = this.backgroundColor;
         ctx.fillRect(0, 0, this.width, this.height);
+        
+        // Draw decorative elements (symmetric patterns typical in Wes Anderson)
+        this.drawDecorations(ctx);
+        
+        // Draw all characters
+        Object.values(this.characters).forEach(char => char.draw(ctx));
         
         // Draw the current dialog centered
         this.currentDialog.draw(ctx, 
             (this.width - 500) / 2,
             (this.height - 150) / 2
         );
+    }
+
+    drawDecorations(ctx) {
+        // Add symmetric decorative patterns
+        ctx.strokeStyle = '#E9B872';
+        ctx.lineWidth = 2;
+        
+        // Draw border
+        const margin = 30;
+        ctx.strokeRect(margin, margin, this.width - margin*2, this.height - margin*2);
+        
+        // Draw corner decorations
+        const cornerSize = 50;
+        this.drawCornerDecoration(ctx, margin, margin, cornerSize);
+        this.drawCornerDecoration(ctx, this.width - margin, margin, cornerSize);
+        this.drawCornerDecoration(ctx, margin, this.height - margin, cornerSize);
+        this.drawCornerDecoration(ctx, this.width - margin, this.height - margin, cornerSize);
+    }
+
+    drawCornerDecoration(ctx, x, y, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.beginPath();
+        ctx.moveTo(-size/2, 0);
+        ctx.lineTo(0, -size/2);
+        ctx.stroke();
+        ctx.restore();
     }
 }
