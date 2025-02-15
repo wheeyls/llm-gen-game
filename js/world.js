@@ -237,7 +237,10 @@ World.rooms = [
         World.generateRoom(2, 2)
     ]
 ];
-    drawInventory(ctx) {
+}
+
+// Add instance methods to World prototype
+World.prototype.drawInventory = function(ctx) {
         const slotSize = 40;
         const padding = 10;
         const startX = this.width - (slotSize + padding) * 5 - padding;
@@ -272,7 +275,7 @@ World.rooms = [
         }
     }
 
-    checkItemPickup() {
+World.prototype.checkItemPickup = function() {
         if (this.selectedInventorySlot === -1) return;
 
         const playerBounds = this.player.getBounds();
@@ -295,7 +298,7 @@ World.rooms = [
         }
     }
 
-    intersects(bounds1, bounds2) {
+World.prototype.intersects = function(bounds1, bounds2) {
         return !(bounds1.left >= bounds2.right || 
                 bounds1.right <= bounds2.left || 
                 bounds1.top >= bounds2.bottom ||
