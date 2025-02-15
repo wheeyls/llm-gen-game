@@ -15,7 +15,11 @@ class Game {
         // Setup keyboard listeners
         window.addEventListener('keydown', (e) => {
             if (this.currentWorld === this.gameWorld) {
-                World.keys[e.key] = true;
+                if (this.gameWorld.itemPrompt) {
+                    this.gameWorld.handleInput(e.key);
+                } else {
+                    World.keys[e.key] = true;
+                }
             } else {
                 this.currentWorld.handleInput(e.key);
             }

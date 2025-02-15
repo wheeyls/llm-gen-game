@@ -7,7 +7,7 @@ class World {
         this.walls = [];
         this.items = [];
         this.inventory = new Array(5).fill(null);
-        this.selectedInventorySlot = -1;
+        this.itemPrompt = null;
         
         // Grid position (0,0 is top-left, 2,2 is bottom-right)
         this.gridX = 1;
@@ -101,15 +101,10 @@ class World {
         if (World.keys.ArrowUp) this.player.move(0, -1);
         if (World.keys.ArrowDown) this.player.move(0, 1);
 
-        // Handle inventory selection
-        if (World.keys['1']) this.selectedInventorySlot = 0;
-        if (World.keys['2']) this.selectedInventorySlot = 1;
-        if (World.keys['3']) this.selectedInventorySlot = 2;
-        if (World.keys['4']) this.selectedInventorySlot = 3;
-        if (World.keys['5']) this.selectedInventorySlot = 4;
-
-        // Check for item pickup
-        this.checkItemPickup();
+        // Check for item collision and show prompt
+        if (!this.itemPrompt) {
+            this.checkItemCollision();
+        }
 
         // Resolve any collisions that occurred during movement
         this.resolveCollisions(this.player);
@@ -160,6 +155,14 @@ class World {
 
         // Draw inventory
         this.drawInventory(ctx);
+
+        // Draw item prompt if active
+        if (this.itemPrompt) {
+            this.itemPrompt.draw(ctx, 
+                (this.width - 300) / 2,
+                (this.height - 180) / 2
+            );
+        }
     }
 }
 
@@ -274,25 +277,38 @@ World.prototype.drawInventory = function(ctx) {
         }
     }
 
-World.prototype.checkItemPickup = function() {
-        if (this.selectedInventorySlot === -1) return;
-
+World.prototype.checkItemCollision = function() {
         const playerBounds = this.player.getBounds();
         for (let i = this.items.length - 1; i >= 0; i--) {
             const item = this.items[i];
             if (this.intersects(playerBounds, item.getBounds())) {
-                // If selected slot has an item, drop it
-                if (this.inventory[this.selectedInventorySlot]) {
-                    const oldItem = this.inventory[this.selectedInventorySlot];
-                    oldItem.x = this.player.x;
-                    oldItem.y = this.player.y;
-                    this.items.push(oldItem);
-                }
-                
-                // Pick up new item
-                this.inventory[this.selectedInventorySlot] = item;
-                this.items.splice(i, 1);
+                this.itemPrompt = new ItemPrompt(item);
+                this.currentItem = item;
+                this.currentItemIndex = i;
                 break;
+            }
+        }
+    }
+
+World.prototype.handleInput = function(key) {
+        if (this.itemPrompt) {
+            const result = this.itemPrompt.handleInput(key);
+            if (result) {
+                if (result.action === 'confirm') {
+                    // If selected slot has an item, drop it
+                    if (this.inventory[result.slot]) {
+                        const oldItem = this.inventory[result.slot];
+                        oldItem.x = this.player.x;
+                        oldItem.y = this.player.y;
+                        this.items.push(oldItem);
+                    }
+                    
+                    // Pick up new item
+                    this.inventory[result.slot] = this.currentItem;
+                    this.items.splice(this.currentItemIndex, 1);
+                }
+                this.itemPrompt = null;
+                this.currentItem = null;
             }
         }
     }
