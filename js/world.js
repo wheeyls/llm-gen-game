@@ -11,7 +11,7 @@ class World {
         this.gridY = 1;
         
         // Room layout properties
-        this.cellSize = 80;  // Size of each cell in the room grid
+        this.cellSize = this.width / 10;  // Scale cells to canvas width
         this.loadCurrentRoom();
         
         // Resolve any initial collisions
@@ -148,28 +148,38 @@ World.generateRoom = function(x, y) {
         }
     }
 
-    // Add center obstacle
-    room[4][4] = '#';
-    room[4][5] = '#';
-    room[5][4] = '#';
-    room[5][5] = '#';
+    // Add center obstacle (2x2 block in middle)
+    const centerStart = Math.floor(room.length * 0.4);
+    const centerSize = Math.floor(room.length * 0.2);
+    for (let i = 0; i < centerSize; i++) {
+        for (let j = 0; j < centerSize; j++) {
+            room[centerStart + i][centerStart + j] = '#';
+        }
+    }
 
-    // Add doors based on position
+    // Add doors based on position (wider doors)
+    const doorWidth = 3;
+    const doorPos = Math.floor((room.length - doorWidth) / 2);
+    
     if (x > 0) { // Left door
-        room[4][0] = ' ';
-        room[5][0] = ' ';
+        for (let i = 0; i < doorWidth; i++) {
+            room[doorPos + i][0] = ' ';
+        }
     }
     if (x < 2) { // Right door
-        room[4][9] = ' ';
-        room[5][9] = ' ';
+        for (let i = 0; i < doorWidth; i++) {
+            room[doorPos + i][room.length - 1] = ' ';
+        }
     }
     if (y > 0) { // Top door
-        room[0][4] = ' ';
-        room[0][5] = ' ';
+        for (let i = 0; i < doorWidth; i++) {
+            room[0][doorPos + i] = ' ';
+        }
     }
     if (y < 2) { // Bottom door
-        room[9][4] = ' ';
-        room[9][5] = ' ';
+        for (let i = 0; i < doorWidth; i++) {
+            room[room.length - 1][doorPos + i] = ' ';
+        }
     }
 
     // Convert to strings
