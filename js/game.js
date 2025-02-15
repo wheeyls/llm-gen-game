@@ -16,6 +16,7 @@ class Game {
         window.addEventListener('keydown', (e) => {
             if (this.currentWorld === this.gameWorld) {
                 if (this.gameWorld.itemPrompt) {
+                    e.preventDefault(); // Prevent default key behavior
                     this.gameWorld.handleInput(e.key);
                 } else {
                     World.keys[e.key] = true;

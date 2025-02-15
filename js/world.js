@@ -91,15 +91,17 @@ class World {
     }
 
     update() {
-        // Store old position for collision resolution
-        const oldX = this.player.x;
-        const oldY = this.player.y;
+        // Only handle movement if no prompt is active
+        if (!this.itemPrompt) {
+            // Store old position for collision resolution
+            const oldX = this.player.x;
+            const oldY = this.player.y;
 
-        // Handle keyboard input for player movement
-        if (World.keys.ArrowLeft) this.player.move(-1, 0);
-        if (World.keys.ArrowRight) this.player.move(1, 0);
-        if (World.keys.ArrowUp) this.player.move(0, -1);
-        if (World.keys.ArrowDown) this.player.move(0, 1);
+            // Handle keyboard input for player movement
+            if (World.keys.ArrowLeft) this.player.move(-1, 0);
+            if (World.keys.ArrowRight) this.player.move(1, 0);
+            if (World.keys.ArrowUp) this.player.move(0, -1);
+            if (World.keys.ArrowDown) this.player.move(0, 1);
 
         // Check for item collision and show prompt
         if (!this.itemPrompt) {

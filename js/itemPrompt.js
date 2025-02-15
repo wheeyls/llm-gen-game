@@ -19,7 +19,7 @@ class ItemPrompt {
         ctx.fillStyle = '#333';
         ctx.font = '16px Arial';
         ctx.fillText(`Found: ${this.item.type}`, x + 20, y + 30);
-        ctx.fillText('Choose inventory slot (1-5):', x + 20, y + 60);
+        ctx.fillText('Use ↑↓ to select slot, Enter to confirm, Esc to cancel', x + 20, y + 60);
 
         // Draw slot options
         for (let i = 0; i < 5; i++) {
