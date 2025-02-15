@@ -115,23 +115,24 @@ class TransitionWorld {
         ctx.lineWidth = 2;
         
         // Draw border
-        const margin = 30;
-        ctx.strokeRect(margin, margin, this.width - margin*2, this.height - margin*2);
+        ctx.strokeRect(0, 0, this.width, this.height);
         
         // Draw corner decorations
-        const cornerSize = 50;
-        this.drawCornerDecoration(ctx, margin, margin, cornerSize);
-        this.drawCornerDecoration(ctx, this.width - margin, margin, cornerSize);
-        this.drawCornerDecoration(ctx, margin, this.height - margin, cornerSize);
-        this.drawCornerDecoration(ctx, this.width - margin, this.height - margin, cornerSize);
+        const cornerSize = 80;
+        this.drawCornerDecoration(ctx, 0, 0, cornerSize, 1, 1);
+        this.drawCornerDecoration(ctx, this.width, 0, cornerSize, -1, 1);
+        this.drawCornerDecoration(ctx, 0, this.height, cornerSize, 1, -1);
+        this.drawCornerDecoration(ctx, this.width, this.height, cornerSize, -1, -1);
     }
 
-    drawCornerDecoration(ctx, x, y, size) {
+    drawCornerDecoration(ctx, x, y, size, dirX, dirY) {
         ctx.save();
         ctx.translate(x, y);
         ctx.beginPath();
-        ctx.moveTo(-size/2, 0);
-        ctx.lineTo(0, -size/2);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(size * dirX, 0);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, size * dirY);
         ctx.stroke();
         ctx.restore();
     }
