@@ -11,7 +11,7 @@ class World {
         this.gridY = 1;
         
         // Room layout properties
-        this.cellSize = this.width / 10;  // Scale cells to canvas width
+        this.cellSize = Math.min(this.width, this.height) / 10;  // Scale cells to smallest canvas dimension
         this.loadCurrentRoom();
         
         // Resolve any initial collisions
@@ -22,12 +22,16 @@ class World {
         this.walls = [];
         const roomLayout = World.rooms[this.gridY][this.gridX];
         
+        // Calculate offset to center the room
+        const offsetX = (this.width - (10 * this.cellSize)) / 2;
+        const offsetY = (this.height - (10 * this.cellSize)) / 2;
+        
         for (let y = 0; y < roomLayout.length; y++) {
             for (let x = 0; x < roomLayout[y].length; x++) {
                 if (roomLayout[y][x] === '#') {
                     this.walls.push(new Wall(
-                        x * this.cellSize,
-                        y * this.cellSize,
+                        offsetX + (x * this.cellSize),
+                        offsetY + (y * this.cellSize),
                         this.cellSize,
                         this.cellSize
                     ));
