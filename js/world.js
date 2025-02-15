@@ -313,8 +313,9 @@ World.prototype.handleInput = function(key) {
 
                         // Drop the old item if there was one
                         if (oldItem) {
-                            oldItem.x = this.player.x;
-                            oldItem.y = this.player.y;
+                            // Drop item slightly to the right and down from player
+                            oldItem.x = this.player.x + this.player.width + 10;
+                            oldItem.y = this.player.y + this.player.height + 10;
                             this.items.push(oldItem);
                         }
                     }
