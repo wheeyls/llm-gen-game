@@ -34,6 +34,9 @@ class World {
                 }
             }
         }
+
+        // Ensure player starts in a safe position in new room
+        this.resolveCollisions(this.player);
     }
 
     checkCollisions(sprite) {
@@ -130,112 +133,64 @@ class World {
 // Static keyboard state
 World.keys = {};
 
-// Room layouts
+// Room generation and layout
+World.generateRoom = function(x, y) {
+    let room = [];
+    // Initialize with all walls
+    for (let i = 0; i < 10; i++) {
+        room[i] = new Array(10).fill('#');
+    }
+
+    // Clear center area
+    for (let i = 1; i < 9; i++) {
+        for (let j = 1; j < 9; j++) {
+            room[i][j] = ' ';
+        }
+    }
+
+    // Add center obstacle
+    room[4][4] = '#';
+    room[4][5] = '#';
+    room[5][4] = '#';
+    room[5][5] = '#';
+
+    // Add doors based on position
+    if (x > 0) { // Left door
+        room[4][0] = ' ';
+        room[5][0] = ' ';
+    }
+    if (x < 2) { // Right door
+        room[4][9] = ' ';
+        room[5][9] = ' ';
+    }
+    if (y > 0) { // Top door
+        room[0][4] = ' ';
+        room[0][5] = ' ';
+    }
+    if (y < 2) { // Bottom door
+        room[9][4] = ' ';
+        room[9][5] = ' ';
+    }
+
+    // Convert to strings
+    return room.map(row => row.join(''));
+};
+
+// Generate all rooms
 World.rooms = [
-    // Row 0
     [
-        // Parse room layouts from ASCII art
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n'),
-        
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n'),
-        
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n')
+        World.generateRoom(0, 0),
+        World.generateRoom(1, 0),
+        World.generateRoom(2, 0)
     ],
-    // Row 1
     [
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n'),
-        
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n'),
-        
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n')
+        World.generateRoom(0, 1),
+        World.generateRoom(1, 1),
+        World.generateRoom(2, 1)
     ],
-    // Row 2
     [
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n'),
-        
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n'),
-        
-        `##########
-#        #
-#        #
-##      ##
-#   ##   #
-#   ##   #
-##      ##
-#        #
-#        #
-##########`.split('\n')
+        World.generateRoom(0, 2),
+        World.generateRoom(1, 2),
+        World.generateRoom(2, 2)
     ]
 ];
