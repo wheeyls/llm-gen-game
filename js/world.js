@@ -285,33 +285,39 @@ World.prototype.checkItemCollision = function() {
             const item = this.items[i];
             if (this.intersects(playerBounds, item.getBounds())) {
                 this.itemPrompt = new ItemPrompt(item);
-                this.currentItem = item;
-                this.currentItemIndex = i;
+                this.state.transition(GameState.ITEM_PROMPT, {
+                    item: item,
+                    itemIndex: i
+                });
                 break;
             }
         }
     }
 
 World.prototype.handleInput = function(key) {
-        if (this.itemPrompt) {
-            const result = this.itemPrompt.handleInput(key);
-            if (result) {
-                if (result.action === 'confirm') {
-                    // If selected slot has an item, drop it
-                    if (this.inventory[result.slot]) {
-                        const oldItem = this.inventory[result.slot];
-                        oldItem.x = this.player.x;
-                        oldItem.y = this.player.y;
-                        this.items.push(oldItem);
-                    }
+        switch (this.state.current) {
+            case GameState.ITEM_PROMPT:
+                const result = this.itemPrompt.handleInput(key);
+                if (result) {
+                    if (result.action === 'confirm') {
+                        // If selected slot has an item, drop it
+                        if (this.inventory[result.slot]) {
+                            const oldItem = this.inventory[result.slot];
+                            oldItem.x = this.player.x;
+                            oldItem.y = this.player.y;
+                            this.items.push(oldItem);
+                        }
 
-                    // Pick up new item
-                    this.inventory[result.slot] = this.currentItem;
-                    this.items.splice(this.currentItemIndex, 1);
+                        // Pick up new item
+                        this.inventory[result.slot] = this.state.stateData.item;
+                        this.items.splice(this.state.stateData.itemIndex, 1);
+                    }
+                    
+                    // Return to exploring state
+                    this.state.transition(GameState.EXPLORING);
+                    this.itemPrompt = null;
                 }
-                this.itemPrompt = null;
-                this.currentItem = null;
-            }
+                break;
         }
     }
 
