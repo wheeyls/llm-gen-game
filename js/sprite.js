@@ -8,6 +8,24 @@ class Sprite {
         this.speed = 5;
     }
 
+    getBounds() {
+        return {
+            left: this.x,
+            right: this.x + this.width,
+            top: this.y,
+            bottom: this.y + this.height
+        };
+    }
+
+    intersects(other) {
+        const a = this.getBounds();
+        const b = other.getBounds();
+        return !(a.left >= b.right || 
+                a.right <= b.left || 
+                a.top >= b.bottom ||
+                a.bottom <= b.top);
+    }
+
     draw(ctx) {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
