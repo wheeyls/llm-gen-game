@@ -33,11 +33,25 @@ class World {
 
         // Add some random items to the room
         const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];
-        for (let i = 0; i < 3; i++) {
+        let attempts = 0;
+        const maxAttempts = 20;
+        let itemsPlaced = 0;
+
+        while (itemsPlaced < 3 && attempts < maxAttempts) {
             const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
             const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
-            const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-            this.items.push(new Item(x, y, type));
+            
+            // Create temporary item to check position
+            const tempItem = new Item(x, y, 'temp');
+            
+            // Check if position is clear
+            if (!this.walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
+                const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+                this.items.push(new Item(x, y, type));
+                itemsPlaced++;
+            }
+            
+            attempts++;
         }
 
         for (let y = 0; y < roomLayout.length; y++) {
