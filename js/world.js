@@ -102,6 +102,7 @@ class World {
             if (World.keys.ArrowRight) this.player.move(1, 0);
             if (World.keys.ArrowUp) this.player.move(0, -1);
             if (World.keys.ArrowDown) this.player.move(0, 1);
+        }
 
         // Check for item collision and show prompt
         if (!this.itemPrompt) {
