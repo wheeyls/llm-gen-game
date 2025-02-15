@@ -2,15 +2,29 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.world = new World(this.canvas.width, this.canvas.height);
+        
+        // Start with transition world
+        this.transitionWorld = new TransitionWorld(
+            this.canvas.width, 
+            this.canvas.height,
+            () => this.startGameWorld()
+        );
+        this.gameWorld = null;
+        this.currentWorld = this.transitionWorld;
         
         // Setup keyboard listeners
         window.addEventListener('keydown', (e) => {
-            World.keys[e.key] = true;
+            if (this.currentWorld === this.gameWorld) {
+                World.keys[e.key] = true;
+            } else {
+                this.currentWorld.handleInput(e.key);
+            }
         });
         
         window.addEventListener('keyup', (e) => {
-            World.keys[e.key] = false;
+            if (this.currentWorld === this.gameWorld) {
+                World.keys[e.key] = false;
+            }
         });
 
         // Start the game loop
@@ -18,16 +32,19 @@ class Game {
         requestAnimationFrame(this.gameLoop.bind(this));
     }
 
+    startGameWorld() {
+        this.gameWorld = new World(this.canvas.width, this.canvas.height);
+        this.currentWorld = this.gameWorld;
+    }
+
     gameLoop(timestamp) {
         // Calculate delta time
         const deltaTime = timestamp - this.lastTime;
         this.lastTime = timestamp;
 
-        // Update game state
-        this.world.update(deltaTime);
-        
-        // Render
-        this.world.draw(this.ctx);
+        // Update and render current world
+        this.currentWorld.update(deltaTime);
+        this.currentWorld.draw(this.ctx);
 
         // Schedule next frame
         requestAnimationFrame(this.gameLoop.bind(this));
