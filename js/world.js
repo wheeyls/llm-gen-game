@@ -362,14 +362,12 @@ World.prototype.scatterInitialItems = function() {
             let attempts = 0;
             const maxAttempts = 20;
             let itemsPlaced = 0;
+            const roomItems = [];
 
             // Try to place items in valid positions
             while (itemsPlaced < itemsPerRoom && attempts < maxAttempts) {
-                // Calculate position relative to the specific room's grid coordinates
-                const roomOffsetX = (this.width - (10 * this.cellSize)) / 2;
-                const roomOffsetY = (this.height - (10 * this.cellSize)) / 2;
-                const x = roomOffsetX + (1 + Math.random() * 8) * this.cellSize;
-                const y = roomOffsetY + (1 + Math.random() * 8) * this.cellSize;
+                const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
+                const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
                 
                 // Create temporary walls to check against
                 const walls = [];
@@ -392,21 +390,17 @@ World.prototype.scatterInitialItems = function() {
                 // Check if position is clear
                 if (!walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
                     const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-                    // Store room coordinates with the item
-                    // Store the item with coordinates transformed to its specific room
-                    const item = new Item(
-                        x + (gridX - this.gridX) * this.width,
-                        y + (gridY - this.gridY) * this.height,
-                        type
-                    );
-                    item.gridX = gridX;
-                    item.gridY = gridY;
-                    this.items.push(item);
+                    const item = new Item(x, y, type);
+                    roomItems.push(item);
                     itemsPlaced++;
                 }
                 
                 attempts++;
             }
+
+            // Store items for this room
+            const roomKey = `${gridX},${gridY}`;
+            this.roomItems[roomKey] = roomItems;
         }
     }
 }
