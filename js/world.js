@@ -350,8 +350,11 @@ World.prototype.scatterInitialItems = function() {
 
             // Try to place items in valid positions
             while (itemsPlaced < itemsPerRoom && attempts < maxAttempts) {
-                const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
-                const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
+                // Calculate position relative to the specific room's grid coordinates
+                const roomOffsetX = (this.width - (10 * this.cellSize)) / 2;
+                const roomOffsetY = (this.height - (10 * this.cellSize)) / 2;
+                const x = roomOffsetX + (1 + Math.random() * 8) * this.cellSize;
+                const y = roomOffsetY + (1 + Math.random() * 8) * this.cellSize;
                 
                 // Create temporary walls to check against
                 const walls = [];
@@ -375,7 +378,12 @@ World.prototype.scatterInitialItems = function() {
                 if (!walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
                     const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
                     // Store room coordinates with the item
-                    const item = new Item(x, y, type);
+                    // Store the item with coordinates transformed to its specific room
+                    const item = new Item(
+                        x + (gridX - this.gridX) * this.width,
+                        y + (gridY - this.gridY) * this.height,
+                        type
+                    );
                     item.gridX = gridX;
                     item.gridY = gridY;
                     this.items.push(item);
