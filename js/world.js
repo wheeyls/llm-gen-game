@@ -9,6 +9,7 @@ class World {
         this.inventory = new Array(5).fill(null);
         this.state = new GameState();
         this.itemPrompt = null;
+        this.ignoredItems = new Set(); // Track items we're ignoring
 
         // Grid position (0,0 is top-left, 2,2 is bottom-right)
         this.gridX = 1;
@@ -299,12 +300,18 @@ World.prototype.checkItemCollision = function() {
         for (let i = this.items.length - 1; i >= 0; i--) {
             const item = this.items[i];
             if (this.intersects(playerBounds, item.getBounds())) {
-                this.itemPrompt = new ItemPrompt(item);
-                this.state.transition(GameState.ITEM_PROMPT, {
-                    item: item,
-                    itemIndex: i
-                });
+                // Only show prompt if item isn't being ignored
+                if (!this.ignoredItems.has(item)) {
+                    this.itemPrompt = new ItemPrompt(item);
+                    this.state.transition(GameState.ITEM_PROMPT, {
+                        item: item,
+                        itemIndex: i
+                    });
+                }
                 break;
+            } else {
+                // Clear ignored status when not touching item
+                this.ignoredItems.delete(item);
             }
         }
     }
@@ -332,6 +339,9 @@ World.prototype.handleInput = function(key) {
                             oldItem.y = this.player.y + this.player.height + 10;
                             this.items.push(oldItem);
                         }
+                    } else if (result.action === 'cancel') {
+                        // Add item to ignored set
+                        this.ignoredItems.add(this.state.stateData.item);
                     }
                     
                     // Return to exploring state
