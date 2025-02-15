@@ -31,10 +31,13 @@ class ItemPrompt {
     handleInput(key) {
         if (!this.visible) return null;
 
-        if (key >= '1' && key <= '5') {
-            const slot = parseInt(key) - 1;
-            this.selectedSlot = slot;
-            return { action: 'select', slot: slot };
+        if (key === 'ArrowUp') {
+            this.selectedSlot = Math.max(0, this.selectedSlot - 1);
+            return { action: 'select', slot: this.selectedSlot };
+        }
+        if (key === 'ArrowDown') {
+            this.selectedSlot = Math.min(4, this.selectedSlot + 1);
+            return { action: 'select', slot: this.selectedSlot };
         }
         if (key === 'Enter') {
             this.visible = false;
