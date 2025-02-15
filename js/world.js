@@ -91,22 +91,21 @@ class World {
     }
 
     update() {
-        // Only handle movement if no prompt is active
-        if (!this.itemPrompt) {
-            // Store old position for collision resolution
-            const oldX = this.player.x;
-            const oldY = this.player.y;
+        switch (this.state.current) {
+            case GameState.EXPLORING:
+                // Handle movement
+                if (World.keys.ArrowLeft) this.player.move(-1, 0);
+                if (World.keys.ArrowRight) this.player.move(1, 0);
+                if (World.keys.ArrowUp) this.player.move(0, -1);
+                if (World.keys.ArrowDown) this.player.move(0, 1);
 
-            // Handle keyboard input for player movement
-            if (World.keys.ArrowLeft) this.player.move(-1, 0);
-            if (World.keys.ArrowRight) this.player.move(1, 0);
-            if (World.keys.ArrowUp) this.player.move(0, -1);
-            if (World.keys.ArrowDown) this.player.move(0, 1);
-        }
+                // Check for item collision
+                this.checkItemCollision();
+                break;
 
-        // Check for item collision and show prompt
-        if (!this.itemPrompt) {
-            this.checkItemCollision();
+            case GameState.ITEM_PROMPT:
+                // No movement during prompt
+                break;
         }
 
         // Resolve any collisions that occurred during movement
