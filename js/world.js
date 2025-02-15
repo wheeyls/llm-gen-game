@@ -17,6 +17,11 @@ class World {
 
         // Room layout properties
         this.cellSize = Math.min(this.width, this.height) / 10;  // Scale cells to smallest canvas dimension
+        
+        // Scatter items across all rooms once at the start
+        this.scatterInitialItems();
+        
+        // Load initial room
         this.loadCurrentRoom();
 
         // Resolve any initial collisions
@@ -25,35 +30,11 @@ class World {
 
     loadCurrentRoom() {
         this.walls = [];
-        this.items = [];
         const roomLayout = World.rooms[this.gridY][this.gridX];
 
         // Calculate offset to center the room
         const offsetX = (this.width - (10 * this.cellSize)) / 2;
         const offsetY = (this.height - (10 * this.cellSize)) / 2;
-
-        // Add some random items to the room
-        const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];
-        let attempts = 0;
-        const maxAttempts = 20;
-        let itemsPlaced = 0;
-
-        while (itemsPlaced < 3 && attempts < maxAttempts) {
-            const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
-            const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
-            
-            // Create temporary item to check position
-            const tempItem = new Item(x, y, 'temp');
-            
-            // Check if position is clear
-            if (!this.walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
-                const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-                this.items.push(new Item(x, y, type));
-                itemsPlaced++;
-            }
-            
-            attempts++;
-        }
 
         for (let y = 0; y < roomLayout.length; y++) {
             for (let x = 0; x < roomLayout[y].length; x++) {
@@ -351,6 +332,61 @@ World.prototype.handleInput = function(key) {
                 break;
         }
     }
+
+World.prototype.scatterInitialItems = function() {
+    const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];
+    const itemsPerRoom = 3;
+    
+    // For each room in the 3x3 grid
+    for (let gridY = 0; gridY < 3; gridY++) {
+        for (let gridX = 0; gridX < 3; gridX++) {
+            const roomLayout = World.rooms[gridY][gridX];
+            const offsetX = (this.width - (10 * this.cellSize)) / 2;
+            const offsetY = (this.height - (10 * this.cellSize)) / 2;
+            
+            let attempts = 0;
+            const maxAttempts = 20;
+            let itemsPlaced = 0;
+
+            // Try to place items in valid positions
+            while (itemsPlaced < itemsPerRoom && attempts < maxAttempts) {
+                const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
+                const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
+                
+                // Create temporary walls to check against
+                const walls = [];
+                for (let y = 0; y < roomLayout.length; y++) {
+                    for (let x = 0; x < roomLayout[y].length; x++) {
+                        if (roomLayout[y][x] === '#') {
+                            walls.push(new Wall(
+                                offsetX + (x * this.cellSize),
+                                offsetY + (y * this.cellSize),
+                                this.cellSize,
+                                this.cellSize
+                            ));
+                        }
+                    }
+                }
+                
+                // Create temporary item to check position
+                const tempItem = new Item(x, y, 'temp');
+                
+                // Check if position is clear
+                if (!walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
+                    const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+                    // Store room coordinates with the item
+                    const item = new Item(x, y, type);
+                    item.gridX = gridX;
+                    item.gridY = gridY;
+                    this.items.push(item);
+                    itemsPlaced++;
+                }
+                
+                attempts++;
+            }
+        }
+    }
+}
 
 World.prototype.intersects = function(bounds1, bounds2) {
         return !(bounds1.left >= bounds2.right ||
