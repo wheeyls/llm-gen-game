@@ -13,6 +13,9 @@ class World {
         // Room layout properties
         this.cellSize = 80;  // Size of each cell in the room grid
         this.loadCurrentRoom();
+        
+        // Resolve any initial collisions
+        this.resolveCollisions(this.player);
     }
 
     loadCurrentRoom() {
@@ -34,7 +37,37 @@ class World {
     }
 
     checkCollisions(sprite) {
-        return this.walls.some(wall => sprite.intersects(wall));
+        return this.walls.filter(wall => sprite.intersects(wall));
+    }
+
+    resolveCollisions(sprite) {
+        const collisions = this.checkCollisions(sprite);
+        
+        for (const wall of collisions) {
+            const spriteBox = sprite.getBounds();
+            const wallBox = wall.getBounds();
+            
+            // Calculate overlap on each axis
+            const overlapX = Math.min(spriteBox.right - wallBox.left, wallBox.right - spriteBox.left);
+            const overlapY = Math.min(spriteBox.bottom - wallBox.top, wallBox.bottom - spriteBox.top);
+
+            // Push out in direction of smallest overlap
+            if (overlapX < overlapY) {
+                // Push horizontally
+                if (spriteBox.left < wallBox.left) {
+                    sprite.x = wallBox.left - sprite.width;
+                } else {
+                    sprite.x = wallBox.right;
+                }
+            } else {
+                // Push vertically
+                if (spriteBox.top < wallBox.top) {
+                    sprite.y = wallBox.top - sprite.height;
+                } else {
+                    sprite.y = wallBox.bottom;
+                }
+            }
+        }
     }
 
     update() {
@@ -48,11 +81,8 @@ class World {
         if (World.keys.ArrowUp) this.player.move(0, -1);
         if (World.keys.ArrowDown) this.player.move(0, 1);
 
-        // Check for collisions and revert if needed
-        if (this.checkCollisions(this.player)) {
-            this.player.x = oldX;
-            this.player.y = oldY;
-        }
+        // Resolve any collisions that occurred during movement
+        this.resolveCollisions(this.player);
 
         // Check for screen transitions (only through gaps in walls)
         if (this.player.x < 0 && this.gridX > 0) {
