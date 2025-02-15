@@ -7,6 +7,7 @@ class World {
         this.walls = [];
         this.items = [];
         this.inventory = new Array(5).fill(null);
+        this.state = new GameState();
         this.itemPrompt = null;
 
         // Grid position (0,0 is top-left, 2,2 is bottom-right)
