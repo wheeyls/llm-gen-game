@@ -2,8 +2,8 @@ import World from './world.js';
 import TransitionWorld from './transitionWorld.js';
 
 export default class Game {
-    constructor() {
-        this.canvas = document.getElementById('gameCanvas');
+    constructor(canvas) {
+        this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         
         // Start with transition world
@@ -58,6 +58,3 @@ export default class Game {
         requestAnimationFrame(this.gameLoop.bind(this));
     }
 }
-
-// Start the game when the page loads
-new Game();
