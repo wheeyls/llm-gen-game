@@ -2,9 +2,10 @@ import World from './world.js';
 import TransitionWorld from './transitionWorld.js';
 
 export default class Game {
-    constructor(canvas) {
+    constructor(canvas, options = {}) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
+        this.isTestMode = options.isTestMode || false;
         
         // Start with transition world
         this.transitionWorld = new TransitionWorld(
@@ -35,9 +36,11 @@ export default class Game {
             }
         });
 
-        // Start the game loop
-        this.lastTime = 0;
-        requestAnimationFrame(this.gameLoop.bind(this));
+        // Only start game loop if not in test mode
+        if (!this.isTestMode) {
+            this.lastTime = 0;
+            requestAnimationFrame(this.gameLoop.bind(this));
+        }
     }
 
     startGameWorld() {
@@ -50,11 +53,18 @@ export default class Game {
         const deltaTime = timestamp - this.lastTime;
         this.lastTime = timestamp;
 
+        this.step(deltaTime);
+
+        // Schedule next frame if not in test mode
+        if (!this.isTestMode) {
+            requestAnimationFrame(this.gameLoop.bind(this));
+        }
+    }
+
+    // Method for testing to manually step the game
+    step(deltaTime) {
         // Update and render current world
         this.currentWorld.update(deltaTime);
         this.currentWorld.draw(this.ctx);
-
-        // Schedule next frame
-        requestAnimationFrame(this.gameLoop.bind(this));
     }
 }

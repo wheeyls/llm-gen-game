@@ -13,7 +13,7 @@ describe('Game Integration', () => {
         canvas.width = 600;
         canvas.height = 600;
 
-        game = new Game(canvas);
+        game = new Game(canvas, { isTestMode: true });
     });
 
     describe('Game Flow', () => {
@@ -26,15 +26,15 @@ describe('Game Integration', () => {
             game.currentWorld.handleInput('Enter');
 
             // Complete transition animation
-            game.currentWorld.update(100);
+            game.step(100);
             game.currentWorld.handleInput('Enter');
 
             // Complete second transition animation
-            game.currentWorld.update(100);
+            game.step(100);
             game.currentWorld.handleInput('Enter');
 
             // Complete final transition animation
-            game.currentWorld.update(100);
+            game.step(100);
 
             expect(game.currentWorld).toBe(game.gameWorld);
         });
