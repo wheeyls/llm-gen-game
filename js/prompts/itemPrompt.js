@@ -1,4 +1,4 @@
-import BasePrompt from './prompts/basePrompt.js';
+import BasePrompt from './basePrompt.js';
 
 export default class ItemPrompt extends BasePrompt {
     constructor(item) {

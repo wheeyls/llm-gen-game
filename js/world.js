@@ -1,7 +1,8 @@
 import Sprite from './sprite.js';
 import Wall from './wall.js';
 import Item from './item.js';
-import ItemPrompt from './itemPrompt.js';
+import ItemPrompt from './prompts/itemPrompt.js';
+import ExitPrompt from './prompts/exitPrompt.js';
 import GameState from './gameState.js';
 import { ItemProperties } from './itemProperties.js';
 
@@ -133,6 +134,8 @@ export default class World {
 
             case GameState.ITEM_PROMPT:
                 // No movement during prompt
+                break;
+            case GameState.EXIT_PROMPT:
                 break;
         }
 
