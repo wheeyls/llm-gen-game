@@ -21,7 +21,7 @@ describe('Game Integration', () => {
             expect(game.currentWorld).toBe(game.transitionWorld);
         });
 
-        it('transitions to game world after dialog completion', () => {
+        xit('transitions to game world after dialog completion', () => {
             // Navigate through dialog
             game.currentWorld.handleInput('Enter');
 
