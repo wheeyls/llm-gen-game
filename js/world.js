@@ -389,10 +389,10 @@ World.prototype.handleInput = function(key) {
                 } else if (result) {
                     if (result.action === 'confirm') {
                         // Store the old item if there is one
-                        const oldItem = this.inventory[result.slot];
+                        const oldItem = this.inventory[result.value];
                     
                         // Pick up new item
-                        this.inventory[result.slot] = this.state.stateData.item;
+                        this.inventory[result.value] = this.state.stateData.item;
                     
                         // Remove item from current room's items
                         const roomKey = `${this.gridX},${this.gridY}`;

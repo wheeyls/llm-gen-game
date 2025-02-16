@@ -17,13 +17,6 @@ export default class ExitPrompt extends BasePrompt {
     }
 
     draw(ctx, x, y) {
-        super.draw(ctx, x, y, 300, 200);
-
-        // Draw subtitle (inventory status)
-        if (this.subtitle) {
-            ctx.fillStyle = '#333';
-            ctx.font = '16px Arial';
-            ctx.fillText(this.subtitle, x + 20, y + 60);
-        }
+        super.draw(ctx, x, y);
     }
 }

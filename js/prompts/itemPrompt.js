@@ -5,6 +5,7 @@ export default class ItemPrompt extends BasePrompt {
         super();
         this.item = item;
         this.title = `Found: ${this.item.type}`;
+        this.subtitle = null;
         this.options = Array.from({ length: 5 }, (_, i) => ({
             text: `Slot ${i + 1}`,
             action: `slot${i}`
@@ -17,7 +18,7 @@ export default class ItemPrompt extends BasePrompt {
             const slot = parseInt(key) - 1;
             this.selectedIndex = slot;
             this.hide();
-            return { action: 'confirm', slot };
+            return { action: 'confirm', value: slot };
         }
 
         const result = super.handleInput(key);
