@@ -125,8 +125,8 @@ export default class World {
                     };
                     
                     if (this.intersects(this.player.getBounds(), exitBounds)) {
+                        this.exitPrompt = new ExitPrompt(this.inventory);
                         this.state.transition(GameState.EXIT_PROMPT);
-                        // TODO: Trigger transition to next level
                     }
                 }
                 break;
@@ -188,6 +188,14 @@ export default class World {
 
         // Draw player
         this.player.draw(ctx);
+
+        // Draw exit prompt if active
+        if (this.exitPrompt) {
+            this.exitPrompt.draw(ctx,
+                (this.width - 300) / 2,
+                (this.height - 200) / 2
+            );
+        }
 
         // Draw game state
         ctx.fillStyle = 'black';

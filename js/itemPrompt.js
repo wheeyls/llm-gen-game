@@ -1,19 +1,14 @@
-export default class ItemPrompt {
+import BasePrompt from './prompts/basePrompt.js';
+
+export default class ItemPrompt extends BasePrompt {
     constructor(item) {
+        super();
         this.item = item;
         this.selectedSlot = 0;
-        this.visible = true;
     }
 
     draw(ctx, x, y) {
-        if (!this.visible) return;
-
-        // Draw prompt box
-        ctx.fillStyle = '#f0f0f0';
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
-        ctx.fillRect(x, y, 300, 180);
-        ctx.strokeRect(x, y, 300, 180);
+        super.draw(ctx, x, y, 300, 180);
 
         // Draw item info
         ctx.fillStyle = '#333';
