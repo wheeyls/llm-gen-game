@@ -22,10 +22,21 @@ describe('Game Integration', () => {
         });
 
         it('transitions to game world after dialog completion', () => {
-            // Complete transition dialog
+            // Navigate through dialog
+            game.currentWorld.handleInput('ArrowDown');
+            game.currentWorld.handleInput('ArrowDown');
             game.currentWorld.handleInput('Enter'); // Select "Let's just explore"
+            
+            // Complete transition animation
+            game.currentWorld.update(100);
             game.currentWorld.handleInput('Enter'); // Confirm "Let's begin"
+            
+            // Complete second transition animation
+            game.currentWorld.update(100);
             game.currentWorld.handleInput('Enter'); // Enter world
+            
+            // Complete final transition animation
+            game.currentWorld.update(100);
             
             expect(game.currentWorld).toBe(game.gameWorld);
         });
