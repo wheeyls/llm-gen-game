@@ -177,10 +177,10 @@ export default class World {
             );
         }
     }
-}
 
-// Static keyboard state
-static keys = {};
+    // Static keyboard state
+    static keys = {};
+}
 
 // Room generation and layout
 World.generateRoom = function(x, y) {
