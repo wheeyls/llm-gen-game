@@ -1,4 +1,11 @@
-class World {
+import Sprite from './sprite.js';
+import Wall from './wall.js';
+import Item from './item.js';
+import ItemPrompt from './itemPrompt.js';
+import GameState from './gameState.js';
+import { ItemProperties } from './itemProperties.js';
+
+export default class World {
     constructor(width, height) {
         this.width = width;
         this.height = height;
@@ -173,7 +180,7 @@ class World {
 }
 
 // Static keyboard state
-World.keys = {};
+static keys = {};
 
 // Room generation and layout
 World.generateRoom = function(x, y) {

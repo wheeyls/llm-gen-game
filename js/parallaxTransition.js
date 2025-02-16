@@ -1,4 +1,4 @@
-class ParallaxTransition {
+export default class ParallaxTransition {
     constructor(width, height) {
         this.width = width;
         this.height = height;

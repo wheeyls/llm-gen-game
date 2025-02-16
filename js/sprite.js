@@ -1,4 +1,4 @@
-class Sprite {
+export default class Sprite {
     constructor(x, y, width, height, color = 'red') {
         this.x = x;
         this.y = y;

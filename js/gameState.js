@@ -1,4 +1,4 @@
-class GameState {
+export default class GameState {
     static EXPLORING = 'exploring';  // Normal movement and exploration
     static ITEM_PROMPT = 'itemPrompt';  // Showing item pickup dialog
     

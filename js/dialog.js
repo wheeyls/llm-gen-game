@@ -1,4 +1,4 @@
-class Dialog {
+export default class Dialog {
     constructor(text, options = []) {
         this.text = text;
         this.options = options;

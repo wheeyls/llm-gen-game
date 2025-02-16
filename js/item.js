@@ -1,4 +1,6 @@
-class Item {
+import { ItemProperties, PropertyCombinations } from './itemProperties.js';
+
+export default class Item {
     constructor(x, y, type, color = 'yellow') {
         this.x = x;
         this.y = y;

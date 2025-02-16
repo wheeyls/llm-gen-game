@@ -1,4 +1,7 @@
-class Game {
+import World from './world.js';
+import TransitionWorld from './transitionWorld.js';
+
+export default class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
@@ -57,6 +60,4 @@ class Game {
 }
 
 // Start the game when the page loads
-window.onload = () => {
-    new Game();
-};
+new Game();

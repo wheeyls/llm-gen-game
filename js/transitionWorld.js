@@ -1,4 +1,7 @@
-class TransitionWorld {
+import Dialog from './dialog.js';
+import ParallaxTransition from './parallaxTransition.js';
+
+export default class TransitionWorld {
     constructor(width, height, onComplete) {
         this.width = width;
         this.height = height;

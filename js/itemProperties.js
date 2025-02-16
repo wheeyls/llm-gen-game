@@ -1,5 +1,5 @@
 // Item properties that can combine to influence the narrative
-const ItemProperties = {
+export const ItemProperties = {
     // Cultural significance
     SACRED: 'sacred',
     CEREMONIAL: 'ceremonial',
@@ -27,7 +27,7 @@ const ItemProperties = {
 };
 
 // Combinations that create special effects in transition
-const PropertyCombinations = {
+export const PropertyCombinations = {
     CULTURAL_CRISIS: [ItemProperties.SACRED, ItemProperties.SUSPICIOUS],
     RESTORATION_OPPORTUNITY: [ItemProperties.DAMAGED, ItemProperties.CEREMONIAL],
     HISTORICAL_RECKONING: [ItemProperties.COLONIAL, ItemProperties.INDIGENOUS],

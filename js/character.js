@@ -1,4 +1,4 @@
-class Character {
+export default class Character {
     constructor(name, imagePath) {
         this.name = name;
         this.image = new Image();

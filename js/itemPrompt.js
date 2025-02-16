@@ -1,4 +1,4 @@
-class ItemPrompt {
+export default class ItemPrompt {
     constructor(item) {
         this.item = item;
         this.selectedSlot = 0;
