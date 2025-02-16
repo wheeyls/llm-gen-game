@@ -34,7 +34,7 @@ export default class BasePrompt {
 
         if (key === 'ArrowUp' || key === 'w' || key === 'W') {
             this.selectedIndex = Math.max(0, this.selectedIndex - 1);
-            return { action: 'select' };
+            return { action: 'select', value: this.selectedIndex };
         }
         if (key === 'ArrowDown' || key === 's' || key === 'S') {
             this.selectedIndex = Math.min(this.options.length - 1, this.selectedIndex + 1);

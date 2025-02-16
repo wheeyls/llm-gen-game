@@ -374,9 +374,10 @@ World.prototype.handleInput = function(key) {
                     if (exitResult.action === 'exit') {
                         // TODO: Transition to next level
                         console.log('Exiting level with inventory:', this.inventory);
+                    } else if (exitResult.action === 'continue') {
+                        this.state.transition(GameState.EXPLORING);
+                        this.exitPrompt = null;
                     }
-                    this.state.transition(GameState.EXPLORING);
-                    this.exitPrompt = null;
                 }
                 break;
 

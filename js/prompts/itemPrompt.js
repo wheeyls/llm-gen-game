@@ -26,7 +26,7 @@ export default class ItemPrompt extends BasePrompt {
         // Transform base actions into slot-specific actions
         if (result.action.startsWith('slot')) {
             const slot = parseInt(result.action.slice(4));
-            return { action: 'confirm', slot };
+            return { action: 'confirm', value: slot };
         }
 
         return result;
