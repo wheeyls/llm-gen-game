@@ -36,11 +36,9 @@ export default class ExitPrompt extends BasePrompt {
 
         if (key === 'ArrowUp' || key === 'w' || key === 'W') {
             this.selectedOption = Math.max(0, this.selectedOption - 1);
-            return { action: 'select' };
         }
         if (key === 'ArrowDown' || key === 's' || key === 'S') {
             this.selectedOption = Math.min(this.options.length - 1, this.selectedOption + 1);
-            return { action: 'select' };
         }
         if (key === 'Enter') {
             this.hide();

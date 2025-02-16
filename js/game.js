@@ -18,22 +18,12 @@ export default class Game {
         
         // Setup keyboard listeners
         window.addEventListener('keydown', (e) => {
-            if (this.currentWorld === this.gameWorld) {
-                if (this.gameWorld.itemPrompt) {
-                    e.preventDefault(); // Prevent default key behavior
-                    this.gameWorld.handleInput(e.key);
-                } else {
-                    World.keys[e.key] = true;
-                }
-            } else {
-                this.currentWorld.handleInput(e.key);
-            }
+            World.keys[e.key] = true;
+            this.currentWorld.handleInput(e.key);
         });
         
         window.addEventListener('keyup', (e) => {
-            if (this.currentWorld === this.gameWorld) {
-                World.keys[e.key] = false;
-            }
+            World.keys[e.key] = false;
         });
 
         // Only start game loop if not in test mode
