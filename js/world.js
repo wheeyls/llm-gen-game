@@ -365,6 +365,18 @@ World.prototype.checkItemCollision = function() {
 
 World.prototype.handleInput = function(key) {
         switch (this.state.current) {
+            case GameState.EXIT_PROMPT:
+                const exitResult = this.exitPrompt.handleInput(key);
+                if (exitResult) {
+                    if (exitResult.action === 'exit') {
+                        // TODO: Transition to next level
+                        console.log('Exiting level with inventory:', this.inventory);
+                    }
+                    this.state.transition(GameState.EXPLORING);
+                    this.exitPrompt = null;
+                }
+                break;
+
             case GameState.ITEM_PROMPT:
                 const result = this.itemPrompt.handleInput(key);
                 if (result && result.action === 'select') {
