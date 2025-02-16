@@ -112,6 +112,23 @@ export default class World {
 
                 // Check for item collision
                 this.checkItemCollision();
+
+                // Check for exit collision in bottom-right room
+                if (this.gridX === 2 && this.gridY === 2) {
+                    const exitX = (this.width - (10 * this.cellSize)) / 2 + 4 * this.cellSize;
+                    const exitY = (this.height - (10 * this.cellSize)) / 2 + 4 * this.cellSize;
+                    const exitBounds = {
+                        left: exitX,
+                        right: exitX + this.cellSize,
+                        top: exitY,
+                        bottom: exitY + this.cellSize
+                    };
+                    
+                    if (this.intersects(this.player.getBounds(), exitBounds)) {
+                        this.state.transition(GameState.EXIT_PROMPT);
+                        // TODO: Trigger transition to next level
+                    }
+                }
                 break;
 
             case GameState.ITEM_PROMPT:
@@ -157,6 +174,17 @@ export default class World {
 
         // Draw items
         this.items.forEach(item => item.draw(ctx));
+
+        // Draw exit if in bottom-right room
+        if (this.gridX === 2 && this.gridY === 2) {
+            ctx.fillStyle = '#4CAF50';
+            const exitX = (this.width - (10 * this.cellSize)) / 2 + 4 * this.cellSize;
+            const exitY = (this.height - (10 * this.cellSize)) / 2 + 4 * this.cellSize;
+            ctx.fillRect(exitX, exitY, this.cellSize, this.cellSize);
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText('EXIT', exitX + 10, exitY + 35);
+        }
 
         // Draw player
         this.player.draw(ctx);
@@ -215,6 +243,11 @@ World.generateRoom = function(x, y) {
         for (let j = 0; j < centerSize; j++) {
             room[centerStart + i][centerStart + j] = '#';
         }
+    }
+
+    // Add exit to bottom-right room
+    if (x === 2 && y === 2) {
+        room[4][4] = 'E'; // Place exit in a fixed position
     }
 
     // Add doors based on position (wider doors)
