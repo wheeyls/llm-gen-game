@@ -26,11 +26,11 @@ export default class Dialog {
     }
 
     handleInput(key) {
-        if (key === 'ArrowUp') {
+        if (key === 'ArrowUp' || key === 'w' || key === 'W') {
             this.selectedOption = Math.max(0, this.selectedOption - 1);
             return null;
         }
-        if (key === 'ArrowDown') {
+        if (key === 'ArrowDown' || key === 's' || key === 'S') {
             this.selectedOption = Math.min(this.options.length - 1, this.selectedOption + 1);
             return null;
         }

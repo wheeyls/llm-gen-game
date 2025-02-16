@@ -31,11 +31,11 @@ export default class ItemPrompt {
     handleInput(key) {
         if (!this.visible) return null;
 
-        if (key === 'ArrowUp') {
+        if (key === 'ArrowUp' || key === 'w' || key === 'W') {
             this.selectedSlot = Math.max(0, this.selectedSlot - 1);
             return { action: 'select', slot: this.selectedSlot };
         }
-        if (key === 'ArrowDown') {
+        if (key === 'ArrowDown' || key === 's' || key === 'S') {
             this.selectedSlot = Math.min(4, this.selectedSlot + 1);
             return { action: 'select', slot: this.selectedSlot };
         }
