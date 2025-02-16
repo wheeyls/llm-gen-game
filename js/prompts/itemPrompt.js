@@ -4,51 +4,31 @@ export default class ItemPrompt extends BasePrompt {
     constructor(item) {
         super();
         this.item = item;
-        this.selectedSlot = 0;
-    }
-
-    draw(ctx, x, y) {
-        super.draw(ctx, x, y, 300, 180);
-
-        // Draw item info
-        ctx.fillStyle = '#333';
-        ctx.font = '16px Arial';
-        ctx.fillText(`Found: ${this.item.type}`, x + 20, y + 30);
-        ctx.fillText('Use arrows to select slot, Enter to confirm, Esc to cancel', x + 20, y + 60);
-
-        // Draw slot options
-        for (let i = 0; i < 5; i++) {
-            ctx.fillStyle = i === this.selectedSlot ? '#0066cc' : '#333';
-            ctx.fillText(`Slot ${i + 1}`, x + 30, y + 90 + (i * 20));
-        }
+        this.title = `Found: ${this.item.type}`;
+        this.options = Array.from({ length: 5 }, (_, i) => ({
+            text: `Slot ${i + 1}`,
+            action: `slot${i}`
+        }));
     }
 
     handleInput(key) {
-        if (!this.visible) return null;
-
-        if (key === 'ArrowUp' || key === 'w' || key === 'W') {
-            this.selectedSlot = Math.max(0, this.selectedSlot - 1);
-            return { action: 'select', slot: this.selectedSlot };
-        }
-        if (key === 'ArrowDown' || key === 's' || key === 'S') {
-            this.selectedSlot = Math.min(4, this.selectedSlot + 1);
-            return { action: 'select', slot: this.selectedSlot };
-        }
-        // Number key shortcuts (1-5)
+        // Handle number key shortcuts (1-5)
         if (key >= '1' && key <= '5') {
             const slot = parseInt(key) - 1;
-            this.selectedSlot = slot;
-            this.visible = false;
-            return { action: 'confirm', slot: slot };
+            this.selectedIndex = slot;
+            this.hide();
+            return { action: 'confirm', slot };
         }
-        if (key === 'Enter') {
-            this.visible = false;
-            return { action: 'confirm', slot: this.selectedSlot };
+
+        const result = super.handleInput(key);
+        if (!result) return null;
+
+        // Transform base actions into slot-specific actions
+        if (result.action.startsWith('slot')) {
+            const slot = parseInt(result.action.slice(4));
+            return { action: 'confirm', slot };
         }
-        if (key === 'Escape') {
-            this.visible = false;
-            return { action: 'cancel' };
-        }
-        return null;
+
+        return result;
     }
 }
