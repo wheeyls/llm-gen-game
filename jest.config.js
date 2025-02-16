@@ -3,6 +3,5 @@ export default {
     transform: {},
     moduleFileExtensions: ['js'],
     testMatch: ['**/tests/**/*.spec.js'],
-    setupFilesAfterEnv: ['./js/tests/jest.setup.js'],
-    extensionsToTreatAsEsm: ['.js']
+    setupFilesAfterEnv: ['./js/tests/jest.setup.js']
 };
