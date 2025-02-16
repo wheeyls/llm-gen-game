@@ -23,17 +23,15 @@ describe('Game Integration', () => {
 
         it('transitions to game world after dialog completion', () => {
             // Navigate through dialog
-            game.currentWorld.handleInput('ArrowDown');
-            game.currentWorld.handleInput('ArrowDown');
-            game.currentWorld.handleInput('Enter'); // Select "Let's just explore"
+            game.currentWorld.handleInput('Enter');
             
             // Complete transition animation
             game.currentWorld.update(100);
-            game.currentWorld.handleInput('Enter'); // Confirm "Let's begin"
+            game.currentWorld.handleInput('Enter');
             
             // Complete second transition animation
             game.currentWorld.update(100);
-            game.currentWorld.handleInput('Enter'); // Enter world
+            game.currentWorld.handleInput('Enter');
             
             // Complete final transition animation
             game.currentWorld.update(100);
