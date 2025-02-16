@@ -8,7 +8,9 @@
   "jest": {
     "transform": {},
     "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": ["<rootDir>/js/tests/jest.setup.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/js/tests/jest.setup.js"
+    ],
     "moduleNameMapper": {
       "^.+\\.js$": "<rootDir>/$0"
     }
