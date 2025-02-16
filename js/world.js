@@ -105,10 +105,10 @@ export default class World {
         switch (this.state.current) {
             case GameState.EXPLORING:
                 // Handle movement
-                if (World.keys.ArrowLeft) this.player.move(-1, 0);
-                if (World.keys.ArrowRight) this.player.move(1, 0);
-                if (World.keys.ArrowUp) this.player.move(0, -1);
-                if (World.keys.ArrowDown) this.player.move(0, 1);
+                if (World.keys.ArrowLeft || World.keys.a || World.keys.A) this.player.move(-1, 0);
+                if (World.keys.ArrowRight || World.keys.d || World.keys.D) this.player.move(1, 0);
+                if (World.keys.ArrowUp || World.keys.w || World.keys.W) this.player.move(0, -1);
+                if (World.keys.ArrowDown || World.keys.s || World.keys.S) this.player.move(0, 1);
 
                 // Check for item collision
                 this.checkItemCollision();
