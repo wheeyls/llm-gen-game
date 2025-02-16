@@ -24,18 +24,18 @@ describe('Game Integration', () => {
         it('transitions to game world after dialog completion', () => {
             // Navigate through dialog
             game.currentWorld.handleInput('Enter');
-            
+
             // Complete transition animation
             game.currentWorld.update(100);
             game.currentWorld.handleInput('Enter');
-            
+
             // Complete second transition animation
             game.currentWorld.update(100);
             game.currentWorld.handleInput('Enter');
-            
+
             // Complete final transition animation
             game.currentWorld.update(100);
-            
+
             expect(game.currentWorld).toBe(game.gameWorld);
         });
     });
@@ -49,7 +49,7 @@ describe('Game Integration', () => {
         it('allows picking up items', () => {
             const world = game.gameWorld;
             const item = world.items[0];
-            
+
             // Move player to item
             world.player.x = item.x;
             world.player.y = item.y;
@@ -57,10 +57,10 @@ describe('Game Integration', () => {
 
             // Verify item prompt appears
             expect(world.itemPrompt).not.toBeNull();
-            
+
             // Pick up item
             world.handleInput('1'); // Select slot 1
-            
+
             expect(world.inventory[0]).toBe(item);
             expect(world.items).not.toContain(item);
         });
@@ -69,13 +69,13 @@ describe('Game Integration', () => {
             const world = game.gameWorld;
             const item = world.items[0];
             const initialProperties = new Set(item.properties);
-            
+
             // Pickup item
             world.player.x = item.x;
             world.player.y = item.y;
             world.update();
             world.handleInput('1');
-            
+
             expect(world.inventory[0].properties).toEqual(initialProperties);
         });
     });
@@ -87,20 +87,20 @@ describe('Game Integration', () => {
 
         it('maintains inventory across rooms', () => {
             const world = game.gameWorld;
-            
+
             // Pick up item in first room
             const item = world.items[0];
             world.player.x = item.x;
             world.player.y = item.y;
             world.update();
             world.handleInput('1');
-            
+
             const initialInventory = [...world.inventory];
-            
+
             // Move to next room
             world.player.x = world.width;
             world.update();
-            
+
             expect(world.inventory).toEqual(initialInventory);
         });
 
@@ -108,11 +108,11 @@ describe('Game Integration', () => {
             const world = game.gameWorld;
             const initialRoomKey = `${world.gridX},${world.gridY}`;
             const initialItems = [...world.roomItems[initialRoomKey]];
-            
+
             // Move to next room
             world.player.x = world.width;
             world.update();
-            
+
             const newRoomKey = `${world.gridX},${world.gridY}`;
             expect(world.roomItems[newRoomKey]).not.toEqual(initialItems);
         });
@@ -126,11 +126,11 @@ describe('Game Integration', () => {
         it('assigns valid properties to items', () => {
             const world = game.gameWorld;
             const item = world.items[0];
-            
+
             // Check that item has 2-3 properties
             expect(item.properties.size).toBeGreaterThanOrEqual(2);
             expect(item.properties.size).toBeLessThanOrEqual(3);
-            
+
             // Check that all properties are valid
             for (const prop of item.properties) {
                 expect(Object.values(ItemProperties)).toContain(prop);
@@ -140,7 +140,7 @@ describe('Game Integration', () => {
         it('generates appropriate descriptions based on properties', () => {
             const world = game.gameWorld;
             const item = world.items[0];
-            
+
             if (item.hasProperty(ItemProperties.SUSPICIOUS)) {
                 expect(item.description).toContain("legitimate means");
             }
