@@ -1,5 +1,6 @@
 import Game from '../game.js';
 import { ItemProperties } from '../itemProperties.js';
+import { FakeCanvas } from './fakeCanvas.js';
 
 describe('Game Integration', () => {
     let game;
@@ -7,16 +8,12 @@ describe('Game Integration', () => {
 
     beforeEach(() => {
         // Setup canvas in test environment
-        canvas = document.createElement('canvas');
+        canvas = new FakeCanvas();
         canvas.id = 'gameCanvas';
         canvas.width = 600;
         canvas.height = 600;
-        document.body.appendChild(canvas);
-        game = new Game();
-    });
 
-    afterEach(() => {
-        document.body.removeChild(canvas);
+        game = new Game(canvas);
     });
 
     describe('Game Flow', () => {
