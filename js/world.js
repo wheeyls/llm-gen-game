@@ -31,6 +31,8 @@ export default class World {
         
         // Scatter items across all rooms once at the start
         this.scatterInitialItems();
+
+        this.placeExit();
         
         // Load initial room
         this.loadCurrentRoom();
@@ -53,7 +55,7 @@ export default class World {
 
         for (let y = 0; y < roomLayout.length; y++) {
             for (let x = 0; x < roomLayout[y].length; x++) {
-                if (roomLayout[y][x] === '#') {
+                if (roomLayout[y][x] === '#' || roomLayout[y][x] === 'E') {
                     this.walls.push(new Wall(
                         offsetX + (x * this.cellSize),
                         offsetY + (y * this.cellSize),
@@ -116,19 +118,7 @@ export default class World {
 
                 // Check for exit collision in bottom-right room
                 if (this.gridX === 2 && this.gridY === 2) {
-                    const exitX = (this.width - (10 * this.cellSize)) / 2 + 4 * this.cellSize;
-                    const exitY = (this.height - (10 * this.cellSize)) / 2 + 4 * this.cellSize;
-                    const exitBounds = {
-                        left: exitX,
-                        right: exitX + this.cellSize,
-                        top: exitY,
-                        bottom: exitY + this.cellSize
-                    };
-                    
-                    if (this.intersects(this.player.getBounds(), exitBounds)) {
-                        this.exitPrompt = new ExitPrompt(this.inventory);
-                        this.state.transition(GameState.EXIT_PROMPT);
-                    }
+                    this.checkExitCollision();
                 }
                 break;
 
@@ -345,6 +335,17 @@ World.prototype.drawInventory = function(ctx) {
         }
     }
 
+World.prototype.checkExitCollision = function() {
+        const playerBounds = this.player.getBounds();
+        const item = this.exit;
+        if (this.intersects(playerBounds, item.getBounds())) {
+            // move player to be one pixel away from the exit
+            this.resolveCollisions(this.player);
+            this.exitPrompt = new ExitPrompt(this.inventory);
+            this.state.transition(GameState.EXIT_PROMPT);
+        }
+    }
+
 World.prototype.checkItemCollision = function() {
         const playerBounds = this.player.getBounds();
         for (let i = this.items.length - 1; i >= 0; i--) {
@@ -422,6 +423,13 @@ World.prototype.handleInput = function(key) {
                 break;
         }
     }
+
+
+World.prototype.placeExit = function() {
+    this.exit = new Item(4 * this.cellSize, 4 * this.cellSize, 'exit', 'green');
+    this.exit.width = this.cellSize;
+    this.exit.height = this.cellSize;
+}
 
 World.prototype.scatterInitialItems = function() {
     const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];
