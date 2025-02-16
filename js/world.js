@@ -161,10 +161,21 @@ export default class World {
         // Draw player
         this.player.draw(ctx);
 
-        // Draw screen coordinates
+        // Draw game state
         ctx.fillStyle = 'black';
         ctx.font = '24px Arial';
         ctx.fillText(`Screen: ${this.gridX},${this.gridY}`, 10, 30);
+        ctx.fillText(`Moves: ${this.state.movesRemaining}`, 10, 60);
+        ctx.fillText(`Security: ${this.state.securityLevel}`, 10, 90);
+        
+        // Draw tension meter
+        const tension = this.state.culturalTension;
+        ctx.fillStyle = tension > 5 ? 'red' : 'orange';
+        ctx.fillText(`Cultural Tension: ${tension}`, 10, 120);
+        
+        // Draw score
+        ctx.fillStyle = 'green';
+        ctx.fillText(`Items Returned: ${this.state.itemsReturned}`, 10, 150);
 
         // Draw inventory
         this.drawInventory(ctx);
