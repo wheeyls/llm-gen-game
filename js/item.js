@@ -6,6 +6,26 @@ class Item {
         this.height = 20;
         this.type = type;
         this.color = color;
+        this.properties = new Set();
+        this.description = '';
+        this.origin = '';
+    }
+
+    addProperty(property) {
+        this.properties.add(property);
+        return this;
+    }
+
+    hasProperty(property) {
+        return this.properties.has(property);
+    }
+
+    // Check if this item contributes to any special combinations
+    getActiveCombinations() {
+        return Object.entries(PropertyCombinations)
+            .filter(([name, required]) => 
+                required.every(prop => this.properties.has(prop)))
+            .map(([name]) => name);
     }
 
     getBounds() {

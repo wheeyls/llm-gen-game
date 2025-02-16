@@ -391,6 +391,24 @@ World.prototype.scatterInitialItems = function() {
                 if (!walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
                     const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
                     const item = new Item(x, y, type);
+                    
+                    // Add 2-3 random properties to each item
+                    const allProperties = Object.values(ItemProperties);
+                    const propertyCount = 2 + Math.floor(Math.random() * 2);
+                    for(let i = 0; i < propertyCount; i++) {
+                        const prop = allProperties[Math.floor(Math.random() * allProperties.length)];
+                        item.addProperty(prop);
+                    }
+                    
+                    // Add satirical descriptions based on properties
+                    if(item.hasProperty(ItemProperties.SUSPICIOUS)) {
+                        item.description = "Acquired through completely legitimate means*";
+                        item.origin = "*Documentation pending";
+                    } else if(item.hasProperty(ItemProperties.SACRED)) {
+                        item.description = "A purely decorative object (ignore the altar marks)";
+                        item.origin = "Found in an unlocked temple";
+                    }
+                    
                     roomItems.push(item);
                     itemsPlaced++;
                 }
