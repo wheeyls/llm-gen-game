@@ -7,7 +7,7 @@ import GameState from './gameState.js';
 import { ItemProperties } from './itemProperties.js';
 
 export default class World {
-  constructor(width, height) {
+  constructor(width, height, generator) {
     this.width = width;
     this.height = height;
     this.player = new Sprite(width / 2, height / 2, 32, 32, 'blue');
@@ -26,6 +26,9 @@ export default class World {
     // Room layout properties
     this.cellSize = Math.min(this.width, this.height) / 10; // Scale cells to smallest canvas dimension
 
+    // Generate rooms using the provided generator
+    this.rooms = generator.generateRooms();
+    
     // Initialize room items storage
     this.roomItems = {};
 
@@ -43,7 +46,7 @@ export default class World {
 
   loadCurrentRoom() {
     this.walls = [];
-    const roomLayout = World.rooms[this.gridY][this.gridX];
+    const roomLayout = this.rooms[this.gridY][this.gridX];
 
     // Calculate offset to center the room
     const offsetX = (this.width - 10 * this.cellSize) / 2;
@@ -233,86 +236,6 @@ export default class World {
   static keys = {};
 }
 
-// Room generation and layout
-World.generateRoom = function (x, y) {
-  let room = [];
-  // Initialize with all walls
-  for (let i = 0; i < 10; i++) {
-    room[i] = new Array(10).fill('#');
-  }
-
-  // Clear center area
-  for (let i = 1; i < 9; i++) {
-    for (let j = 1; j < 9; j++) {
-      room[i][j] = ' ';
-    }
-  }
-
-  // Add exhibit area with security door
-  // Different tiers based on position (higher tier rooms are deeper in)
-  const tier = Math.min(x + y, 3);  // 0-3 tier system
-  const doorSymbol = (tier + 1).toString(); // 1=basic, 2=medium, 3=high security
-
-  // Create exhibit room in center
-  const exhibitStart = 3;
-  const exhibitSize = 4;
-  
-  // Build exhibit walls
-  for (let i = 0; i < exhibitSize; i++) {
-    for (let j = 0; j < exhibitSize; j++) {
-      if (i === 0 || i === exhibitSize - 1 || j === 0 || j === exhibitSize - 1) {
-        room[exhibitStart + i][exhibitStart + j] = '#';
-      }
-    }
-  }
-  
-  // Add security door
-  room[exhibitStart + 2][exhibitStart] = doorSymbol;
-
-  // Add exit to bottom-right room
-  if (x === 2 && y === 2) {
-    room[4][4] = 'E'; // E still means exit
-  }
-
-  // Add doors based on position (wider doors)
-  const doorWidth = 3;
-  const doorPos = Math.floor((room.length - doorWidth) / 2);
-
-  if (x > 0) {
-    // Left door
-    for (let i = 0; i < doorWidth; i++) {
-      room[doorPos + i][0] = ' ';
-    }
-  }
-  if (x < 2) {
-    // Right door
-    for (let i = 0; i < doorWidth; i++) {
-      room[doorPos + i][room.length - 1] = ' ';
-    }
-  }
-  if (y > 0) {
-    // Top door
-    for (let i = 0; i < doorWidth; i++) {
-      room[0][doorPos + i] = ' ';
-    }
-  }
-  if (y < 2) {
-    // Bottom door
-    for (let i = 0; i < doorWidth; i++) {
-      room[room.length - 1][doorPos + i] = ' ';
-    }
-  }
-
-  // Convert to strings
-  return room.map(row => row.join(''));
-};
-
-// Generate all rooms
-World.rooms = [
-  [World.generateRoom(0, 0), World.generateRoom(1, 0), World.generateRoom(2, 0)],
-  [World.generateRoom(0, 1), World.generateRoom(1, 1), World.generateRoom(2, 1)],
-  [World.generateRoom(0, 2), World.generateRoom(1, 2), World.generateRoom(2, 2)],
-];
 
 // Add instance methods to World prototype
 World.prototype.drawInventory = function (ctx) {
@@ -452,7 +375,7 @@ World.prototype.scatterInitialItems = function () {
   // For each room in the 3x3 grid
   for (let gridY = 0; gridY < 3; gridY++) {
     for (let gridX = 0; gridX < 3; gridX++) {
-      const roomLayout = World.rooms[gridY][gridX];
+      const roomLayout = this.rooms[gridY][gridX];
       const offsetX = (this.width - 10 * this.cellSize) / 2;
       const offsetY = (this.height - 10 * this.cellSize) / 2;
 
