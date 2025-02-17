@@ -1,0 +1,67 @@
+import BaseGenerator from './baseGenerator.js';
+
+const DEBUG_MAP = `
+###############################
+#     1  ##     2  ##     3  #
+#   ###  ##   ###  ##   ###  #
+#   #    ##   #    ##   #    #
+#####    ######    ######    #
+#                            #
+#        ##        ##        #
+#        ##        ##        #
+#        ##        ##        #
+#################  ###########
+#################  ###########
+#     1  ##     2  ##     3  #
+#   ###  ##   ###  ##   ###  #
+#   #    ##   #    ##   #    #
+#####    ######    ######    #
+#                            #
+#        ##        ##        #
+#        ##        ##        #
+#        ##        ##        #
+#################  ###########
+#################  ###########
+#     1  ##     1  ##     3  #
+#   ###  ##   ###  ##   ###  #
+#####    ######    ######    #
+#                            E
+#        ##        ##        #
+#        ##        ##        #
+#        ##        ##        #
+#        ##        ##        #
+##############################`;
+
+export default class ManualGenerator extends BaseGenerator {
+  constructor(width, height, mapString = DEBUG_MAP) {
+    super(width, height);
+    this.mapString = mapString;
+    this.fullMap = this.parseMap(mapString);
+  }
+
+  parseMap(mapString) {
+    // Split into rows, filter out empty lines
+    return mapString.split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .map(line => line.split(''));
+  }
+
+  generateRoom(x, y) {
+    const room = [];
+    const startY = y * 10;
+    const startX = x * 10;
+
+    // Extract 10x10 section from the full map
+    for (let i = 0; i < 10; i++) {
+      room[i] = [];
+      for (let j = 0; j < 10; j++) {
+        const mapY = startY + i;
+        const mapX = startX + j;
+        room[i][j] = this.fullMap[mapY]?.[mapX] || '#';
+      }
+    }
+
+    return room.map(row => row.join(''));
+  }
+}

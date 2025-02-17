@@ -1,5 +1,6 @@
 import World from './world.js';
 import ProceduralGenerator from './worldGenerators/proceduralGenerator.js';
+import ManualGenerator from './worldGenerators/manualGenerator.js';
 import TransitionWorld from './transitionWorld.js';
 
 export default class Game {
@@ -33,7 +34,8 @@ export default class Game {
   }
 
   startGameWorld() {
-    const generator = new ProceduralGenerator(this.canvas.width, this.canvas.height);
+    const generator = new ManualGenerator(this.canvas.width, this.canvas.height);
+    //const generator = new ProceduralGenerator(this.canvas.width, this.canvas.height);
     this.gameWorld = new World(this.canvas.width, this.canvas.height, generator);
     this.currentWorld = this.gameWorld;
   }
