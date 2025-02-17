@@ -35,8 +35,6 @@ export default class World {
     // Scatter items across all rooms once at the start
     this.scatterInitialItems();
 
-    this.placeExit();
-
     // Load initial room
     this.loadCurrentRoom();
 
@@ -131,6 +129,11 @@ export default class World {
           sprite.y = wallBox.bottom;
         }
       }
+
+      if (wall.type === 'exit') {
+        this.exitPrompt = new ExitPrompt(this.inventory);
+        this.state.transition(GameState.EXIT_PROMPT);
+      }
     }
   }
 
@@ -146,10 +149,6 @@ export default class World {
         // Check for item collision
         this.checkItemCollision();
 
-        // Check for exit collision in bottom-right room
-        if (this.gridX === 2 && this.gridY === 2) {
-          this.checkExitCollision();
-        }
         break;
 
       case GameState.ITEM_PROMPT:
@@ -270,17 +269,6 @@ World.prototype.drawInventory = function (ctx) {
     ctx.fillStyle = 'black';
     ctx.font = '12px Arial';
     ctx.fillText(i + 1, x + 5, startY + slotSize - 5);
-  }
-};
-
-World.prototype.checkExitCollision = function () {
-  const playerBounds = this.player.getBounds();
-  const item = this.exit;
-  if (this.intersects(playerBounds, item.getBounds())) {
-    // move player to be one pixel away from the exit
-    this.resolveCollisions(this.player);
-    this.exitPrompt = new ExitPrompt(this.inventory);
-    this.state.transition(GameState.EXIT_PROMPT);
   }
 };
 
