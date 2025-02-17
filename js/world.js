@@ -7,7 +7,8 @@ import GameState from './gameState.js';
 import { ItemProperties } from './itemProperties.js';
 
 export default class World {
-  constructor(width, height, generator) {
+  constructor(width, height, generator, game) {
+    this.game = game;
     this.width = width;
     this.height = height;
     this.player = new Sprite(width / 2, height / 2, 32, 32, 'blue');
@@ -140,11 +141,12 @@ export default class World {
   update() {
     switch (this.state.current) {
       case GameState.EXPLORING:
-        // Handle movement
-        if (World.keys.ArrowLeft || World.keys.a || World.keys.A) this.player.move(-1, 0);
-        if (World.keys.ArrowRight || World.keys.d || World.keys.D) this.player.move(1, 0);
-        if (World.keys.ArrowUp || World.keys.w || World.keys.W) this.player.move(0, -1);
-        if (World.keys.ArrowDown || World.keys.s || World.keys.S) this.player.move(0, 1);
+        // Handle movement using game's input manager
+        const input = this.game.input;
+        if (input.isPressed('ArrowLeft') || input.isPressed('a') || input.isPressed('A')) this.player.move(-1, 0);
+        if (input.isPressed('ArrowRight') || input.isPressed('d') || input.isPressed('D')) this.player.move(1, 0);
+        if (input.isPressed('ArrowUp') || input.isPressed('w') || input.isPressed('W')) this.player.move(0, -1);
+        if (input.isPressed('ArrowDown') || input.isPressed('s') || input.isPressed('S')) this.player.move(0, 1);
 
         // Check for item collision
         this.checkItemCollision();
@@ -231,8 +233,6 @@ export default class World {
     }
   }
 
-  // Static keyboard state
-  static keys = {};
 }
 
 

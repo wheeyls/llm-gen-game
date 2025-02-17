@@ -2,6 +2,7 @@ import World from './world.js';
 import ProceduralGenerator from './worldGenerators/proceduralGenerator.js';
 import ManualGenerator from './worldGenerators/manualGenerator.js';
 import TransitionWorld from './transitionWorld.js';
+import InputManager from './inputManager.js';
 
 export default class Game {
   constructor(canvas, options = {}) {
@@ -16,15 +17,8 @@ export default class Game {
     this.gameWorld = null;
     this.currentWorld = this.transitionWorld;
 
-    // Setup keyboard listeners
-    window.addEventListener('keydown', e => {
-      World.keys[e.key] = true;
-      this.currentWorld.handleInput(e.key);
-    });
-
-    window.addEventListener('keyup', e => {
-      World.keys[e.key] = false;
-    });
+    // Setup input manager
+    this.input = new InputManager();
 
     // Only start game loop if not in test mode
     if (!this.isTestMode) {
@@ -36,7 +30,7 @@ export default class Game {
   startGameWorld() {
     const generator = new ManualGenerator(this.canvas.width, this.canvas.height);
     //const generator = new ProceduralGenerator(this.canvas.width, this.canvas.height);
-    this.gameWorld = new World(this.canvas.width, this.canvas.height, generator);
+    this.gameWorld = new World(this.canvas.width, this.canvas.height, generator, this);
     this.currentWorld = this.gameWorld;
   }
 
