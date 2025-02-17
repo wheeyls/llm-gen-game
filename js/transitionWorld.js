@@ -45,6 +45,12 @@ export default class TransitionWorld {
   }
 
   handleInput(key) {
+    // Debug shortcut to skip transition
+    if (key === 'Escape') {
+      this.onComplete();
+      return;
+    }
+
     if (this.parallax.isTransitioning) return;
 
     const result = this.currentDialog.handleInput(key);
