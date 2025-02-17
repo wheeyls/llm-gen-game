@@ -55,13 +55,28 @@ export default class World {
 
     for (let y = 0; y < roomLayout.length; y++) {
       for (let x = 0; x < roomLayout[y].length; x++) {
-        if (roomLayout[y][x] === '#' || roomLayout[y][x] === 'E') {
+        const cell = roomLayout[y][x];
+        if (cell === '#') {
+          // Regular wall
           this.walls.push(
             new Wall(
               offsetX + x * this.cellSize,
               offsetY + y * this.cellSize,
               this.cellSize,
-              this.cellSize
+              this.cellSize,
+              '#333'
+            )
+          );
+        } else if (cell === 'D' || cell === 'E' || cell === 'F') {
+          // Security doors with different colors
+          const doorColor = cell === 'D' ? '#4CAF50' : cell === 'E' ? '#FFC107' : '#F44336';
+          this.walls.push(
+            new Wall(
+              offsetX + x * this.cellSize,
+              offsetY + y * this.cellSize,
+              this.cellSize,
+              this.cellSize,
+              doorColor
             )
           );
         }
@@ -233,14 +248,26 @@ World.generateRoom = function (x, y) {
     }
   }
 
-  // Add center obstacle (2x2 block in middle)
-  const centerStart = Math.floor(room.length * 0.4);
-  const centerSize = Math.floor(room.length * 0.2);
-  for (let i = 0; i < centerSize; i++) {
-    for (let j = 0; j < centerSize; j++) {
-      room[centerStart + i][centerStart + j] = '#';
+  // Add exhibit area with security door
+  // Different tiers based on position (higher tier rooms are deeper in)
+  const tier = Math.min(x + y, 3);  // 0-3 tier system
+  const doorSymbol = tier === 0 ? 'D' : tier === 1 ? 'E' : 'F'; // D=basic, E=medium, F=high security
+
+  // Create exhibit room in center
+  const exhibitStart = 3;
+  const exhibitSize = 4;
+  
+  // Build exhibit walls
+  for (let i = 0; i < exhibitSize; i++) {
+    for (let j = 0; j < exhibitSize; j++) {
+      if (i === 0 || i === exhibitSize - 1 || j === 0 || j === exhibitSize - 1) {
+        room[exhibitStart + i][exhibitStart + j] = '#';
+      }
     }
   }
+  
+  // Add security door
+  room[exhibitStart + 2][exhibitStart] = doorSymbol;
 
   // Add exit to bottom-right room
   if (x === 2 && y === 2) {
