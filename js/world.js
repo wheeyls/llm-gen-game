@@ -20,9 +20,9 @@ export default class World {
     this.itemPrompt = null;
     this.ignoredItems = new Set(); // Track items we're ignoring
 
-    // Grid position (0,0 is top-left, 2,2 is bottom-right)
-    this.gridX = 1;
-    this.gridY = 1;
+    // Grid position (0,0 is left-most room)
+    this.gridX = 0;
+    this.gridY = 0;
 
     // Room layout properties
     this.cellSize = Math.min(this.width, this.height) / 10; // Scale cells to smallest canvas dimension
