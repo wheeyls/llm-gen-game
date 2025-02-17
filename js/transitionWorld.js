@@ -2,10 +2,11 @@ import Dialog from './dialog.js';
 import ParallaxTransition from './parallaxTransition.js';
 
 export default class TransitionWorld {
-  constructor(width, height, onComplete) {
+  constructor(width, height, onComplete, game) {
     this.width = width;
     this.height = height;
     this.onComplete = onComplete;
+    this.game = game;
     this.characters = {};
     this.activeCharacter = null;
     this.backgroundColor = '#FDF6E3'; // Wes Anderson warm background
@@ -44,16 +45,30 @@ export default class TransitionWorld {
     }
   }
 
-  handleInput(key) {
-    // Debug shortcut to skip transition
-    if (key === 'Escape') {
+  update(deltaTime) {
+    // Update parallax transition
+    if (this.parallax.update(deltaTime)) {
+      // Transition complete, update dialog
+      this.nextDialogState?.complete();
+    }
+
+    // Handle input
+    if (this.game.input.isPressed('Escape')) {
       this.onComplete();
       return;
     }
 
     if (this.parallax.isTransitioning) return;
 
-    const result = this.currentDialog.handleInput(key);
+    // Convert pressed keys to input events
+    if (this.game.input.isPressed('ArrowUp') || this.game.input.isPressed('w')) {
+      this.currentDialog.handleInput('ArrowUp');
+    }
+    if (this.game.input.isPressed('ArrowDown') || this.game.input.isPressed('s')) {
+      this.currentDialog.handleInput('ArrowDown');
+    }
+    if (this.game.input.isPressed('Enter')) {
+      const result = this.currentDialog.handleInput('Enter');
     if (result) {
       const goingBack = result.nextDialog === null;
       this.parallax.startTransition(!goingBack);
