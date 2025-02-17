@@ -1,12 +1,11 @@
 This is a game with simple mechanics and style.
 
-It is based off of a simple card game mechanic. the player has 5 inventory slots that represent their "hand".
+It is based off a concept autonomous characters acting out some specific goal. Units will spawn and progress toward their goal, and the player can interact with them to help them reach their goal.
 
-They fill their hand in an explore phase, where they 'draw' or 'discard' items they find on the ground. They then
-move into a transition phase, where the consequences of their cards are played out in a simple dialog exchange.
+Units spawn in waves, which is where we get an organic sense of progress. As the players progresses through the game, the spawning units will be impacted by players the decisions and actions.
 
-They then choose properties of the next level to explore in the transition stage, before moving on to the next level.
+There can be forking branches along the route that close off different unit types, for example. We can also penalize and reward the player to connect them to the consequences of their actions.
 
-This game is inspired by wes anderson aesthetics, and avoids violence and battle as metaphors for gameplay dynamics.
+The concept of this game is to be non-violent and avoid metaphors of fighting and conflict in favor of cooperation and growth. The player is not a god, but a gardener, tending to the needs of the units to help them reach their goal.
 
-We prefer exploration, decision making, and creativity as goals vs "killing enemies".
+Units will have their own personality and traits that set them apart and endure a sense of empathy in the player.
