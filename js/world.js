@@ -69,14 +69,14 @@ export default class World {
           );
         } else if (cell === '1' || cell === '2' || cell === '3') {
           // Security doors with different colors
-          const doorColor = cell === '1' ? '#4CAF50' : cell === '2' ? '#FFC107' : '#F44336';
+          // Security doors with different types
           this.walls.push(
             new Wall(
               offsetX + x * this.cellSize,
               offsetY + y * this.cellSize,
               this.cellSize,
               this.cellSize,
-              doorColor
+              `door${cell}`
             )
           );
         }
