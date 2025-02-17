@@ -13,32 +13,32 @@ describe('Prompts', () => {
     });
 
     it('starts with slot 0 selected', () => {
-      expect(prompt.selectedSlot).toBe(0);
+      expect(prompt.selectedIndex).toBe(0);
     });
 
     it('changes selection with arrow keys', () => {
       prompt.handleInput('ArrowDown');
-      expect(prompt.selectedSlot).toBe(1);
+      expect(prompt.selectedIndex).toBe(1);
 
       prompt.handleInput('ArrowUp');
-      expect(prompt.selectedSlot).toBe(0);
+      expect(prompt.selectedIndex).toBe(0);
     });
 
     it('handles WASD keys', () => {
       prompt.handleInput('s');
-      expect(prompt.selectedSlot).toBe(1);
+      expect(prompt.selectedIndex).toBe(1);
 
       prompt.handleInput('w');
-      expect(prompt.selectedSlot).toBe(0);
+      expect(prompt.selectedIndex).toBe(0);
     });
 
     it('confirms selection with Enter', () => {
-      prompt.selectedSlot = 2;
+      prompt.selectedIndex = 2;
       const result = prompt.handleInput('Enter');
 
       expect(result).toEqual({
         action: 'confirm',
-        slot: 2,
+        value: 2,
       });
       expect(prompt.visible).toBe(false);
     });
@@ -57,7 +57,7 @@ describe('Prompts', () => {
 
       expect(result).toEqual({
         action: 'confirm',
-        slot: 2,
+        value: 2,
       });
       expect(prompt.visible).toBe(false);
     });
@@ -75,27 +75,27 @@ describe('Prompts', () => {
     });
 
     it('starts with first option selected', () => {
-      expect(prompt.selectedOption).toBe(0);
+      expect(prompt.selectedIndex).toBe(0);
     });
 
     it('changes selection with arrow keys', () => {
       prompt.handleInput('ArrowDown');
-      expect(prompt.selectedOption).toBe(1);
+      expect(prompt.selectedIndex).toBe(1);
 
       prompt.handleInput('ArrowUp');
-      expect(prompt.selectedOption).toBe(0);
+      expect(prompt.selectedIndex).toBe(0);
     });
 
     it('handles WASD keys', () => {
       prompt.handleInput('s');
-      expect(prompt.selectedOption).toBe(1);
+      expect(prompt.selectedIndex).toBe(1);
 
       prompt.handleInput('w');
-      expect(prompt.selectedOption).toBe(0);
+      expect(prompt.selectedIndex).toBe(0);
     });
 
     it('confirms exit with Enter', () => {
-      prompt.selectedOption = 0;
+      prompt.selectedIndex = 0;
       const result = prompt.handleInput('Enter');
 
       expect(result).toEqual({
@@ -105,7 +105,7 @@ describe('Prompts', () => {
     });
 
     it('continues exploring when second option selected', () => {
-      prompt.selectedOption = 1;
+      prompt.selectedIndex = 1;
       const result = prompt.handleInput('Enter');
 
       expect(result).toEqual({
@@ -118,7 +118,7 @@ describe('Prompts', () => {
       const result = prompt.handleInput('Escape');
 
       expect(result).toEqual({
-        action: 'continue',
+        action: 'cancel',
       });
       expect(prompt.visible).toBe(false);
     });
