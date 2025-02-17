@@ -12,7 +12,8 @@ export default class Game {
 
     // Start with transition world
     this.transitionWorld = new TransitionWorld(this.canvas.width, this.canvas.height, () =>
-      this.startGameWorld()
+      this.startGameWorld(),
+      this
     );
     this.gameWorld = null;
     this.currentWorld = this.transitionWorld;
@@ -51,6 +52,7 @@ export default class Game {
   step(deltaTime) {
     // Update and render current world
     this.currentWorld.update(deltaTime);
+    this.input.update();
     this.currentWorld.draw(this.ctx);
   }
 }

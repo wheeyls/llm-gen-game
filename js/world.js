@@ -29,7 +29,7 @@ export default class World {
 
     // Generate rooms using the provided generator
     this.rooms = generator.generateRooms();
-    
+
     // Initialize room items storage
     this.roomItems = {};
 
@@ -139,15 +139,9 @@ export default class World {
   }
 
   update() {
+    this.handleInput(this.game.input);
     switch (this.state.current) {
       case GameState.EXPLORING:
-        // Handle movement using game's input manager
-        const input = this.game.input;
-        if (input.isPressed('ArrowLeft') || input.isPressed('a') || input.isPressed('A')) this.player.move(-1, 0);
-        if (input.isPressed('ArrowRight') || input.isPressed('d') || input.isPressed('D')) this.player.move(1, 0);
-        if (input.isPressed('ArrowUp') || input.isPressed('w') || input.isPressed('W')) this.player.move(0, -1);
-        if (input.isPressed('ArrowDown') || input.isPressed('s') || input.isPressed('S')) this.player.move(0, 1);
-
         // Check for item collision
         this.checkItemCollision();
 
@@ -199,7 +193,6 @@ export default class World {
     // Draw items
     this.items.forEach(item => item.draw(ctx));
 
-
     // Draw player
     this.player.draw(ctx);
 
@@ -232,9 +225,7 @@ export default class World {
       this.itemPrompt.draw(ctx, (this.width - 300) / 2, (this.height - 180) / 2);
     }
   }
-
 }
-
 
 // Add instance methods to World prototype
 World.prototype.drawInventory = function (ctx) {
@@ -293,10 +284,22 @@ World.prototype.checkItemCollision = function () {
   }
 };
 
-World.prototype.handleInput = function (key) {
+World.prototype.handleInput = function (input) {
   switch (this.state.current) {
+    case GameState.EXPLORING:
+      // Handle movement using game's input manager
+      if (input.isLeft) {
+        this.player.move(-1, 0);
+      } else if (input.isRight) {
+        this.player.move(1, 0);
+      } else if (input.isUp) {
+        this.player.move(0, -1);
+      } else if (input.isDown) {
+        this.player.move(0, 1);
+      }
+      break;
     case GameState.EXIT_PROMPT:
-      const exitResult = this.exitPrompt.handleInput(key);
+      const exitResult = this.exitPrompt.handleInput(input);
       if (exitResult) {
         if (exitResult.action === 'exit') {
           // TODO: Transition to next level
@@ -309,7 +312,7 @@ World.prototype.handleInput = function (key) {
       break;
 
     case GameState.ITEM_PROMPT:
-      const result = this.itemPrompt.handleInput(key);
+      const result = this.itemPrompt.handleInput(input);
       if (result && result.action === 'select') {
         // Just update the visual selection
         return;
@@ -349,7 +352,6 @@ World.prototype.handleInput = function (key) {
       break;
   }
 };
-
 
 World.prototype.scatterInitialItems = function () {
   const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];

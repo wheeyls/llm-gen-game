@@ -25,16 +25,16 @@ export default class Dialog {
     });
   }
 
-  handleInput(key) {
-    if (key === 'ArrowUp' || key === 'w' || key === 'W') {
+  handleInput(input) {
+    if (input.justUp) {
       this.selectedOption = Math.max(0, this.selectedOption - 1);
       return null;
     }
-    if (key === 'ArrowDown' || key === 's' || key === 'S') {
+    if (input.justDown) {
       this.selectedOption = Math.min(this.options.length - 1, this.selectedOption + 1);
       return null;
     }
-    if (key === 'Enter' && this.options.length > 0) {
+    if (input.justEnter && this.options.length > 0) {
       return this.options[this.selectedOption];
     }
     return null;

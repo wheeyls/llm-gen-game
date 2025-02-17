@@ -12,16 +12,17 @@ export default class ItemPrompt extends BasePrompt {
     }));
   }
 
-  handleInput(key) {
+  handleInput(input) {
     // Handle number key shortcuts (1-5)
-    if (key >= '1' && key <= '5') {
-      const slot = parseInt(key) - 1;
+    const number = input.oneOf('1', '2', '3', '4', '5');
+    if (number) {
+      const slot = parseInt(number) - 1;
       this.selectedIndex = slot;
       this.hide();
       return { action: 'confirm', value: slot };
     }
 
-    const result = super.handleInput(key);
+    const result = super.handleInput(input);
     if (!result) return null;
 
     // Transform base actions into slot-specific actions

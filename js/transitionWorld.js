@@ -53,44 +53,52 @@ export default class TransitionWorld {
     }
 
     // Handle input
-    if (this.game.input.isPressed('Escape')) {
+    const input = this.game.input;
+
+    if (input.isEscape) {
       this.onComplete();
       return;
     }
 
     if (this.parallax.isTransitioning) return;
 
+    let result = null;
     // Convert pressed keys to input events
-    if (this.game.input.isPressed('ArrowUp') || this.game.input.isPressed('w')) {
-      this.currentDialog.handleInput('ArrowUp');
+    if (input.justUp) {
+      console.log('ArrowUp');
+      result = this.currentDialog.handleInput('ArrowUp');
     }
-    if (this.game.input.isPressed('ArrowDown') || this.game.input.isPressed('s')) {
-      this.currentDialog.handleInput('ArrowDown');
+    if (input.justDown) {
+      console.log('ArrowDown');
+      result = this.currentDialog.handleInput('ArrowDown');
     }
-    if (this.game.input.isPressed('Enter')) {
-      const result = this.currentDialog.handleInput('Enter');
-    if (result) {
-      const goingBack = result.nextDialog === null;
-      this.parallax.startTransition(!goingBack);
 
-      // Store next dialog state
-      this.nextDialogState = {
-        result: result,
-        complete: () => {
-          if (result.nextDialog === 'finish') {
-            this.onComplete();
-          } else if (result.nextDialog === null) {
-            // Go back to first dialog
-            this.currentDialog = new Dialog('Welcome to the transition sequence.', [
-              { text: 'I seek power', nextDialog: 'power' },
-              { text: 'I seek wisdom', nextDialog: 'wisdom' },
-              { text: "Let's just explore", nextDialog: 'explore' },
-            ]);
-          } else {
-            this.currentDialog = this.dialogs[result.nextDialog];
-          }
-        },
-      };
+    result = this.currentDialog.handleInput(input);
+
+    if (input.justEnter) {
+      if (result) {
+        const goingBack = result.nextDialog === null;
+        this.parallax.startTransition(!goingBack);
+
+        // Store next dialog state
+        this.nextDialogState = {
+          result: result,
+          complete: () => {
+            if (result.nextDialog === 'finish') {
+              this.onComplete();
+            } else if (result.nextDialog === null) {
+              // Go back to first dialog
+              this.currentDialog = new Dialog('Welcome to the transition sequence.', [
+                { text: 'I seek power', nextDialog: 'power' },
+                { text: 'I seek wisdom', nextDialog: 'wisdom' },
+                { text: "Let's just explore", nextDialog: 'explore' },
+              ]);
+            } else {
+              this.currentDialog = this.dialogs[result.nextDialog];
+            }
+          },
+        };
+      }
     }
   }
 

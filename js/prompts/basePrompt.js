@@ -48,26 +48,22 @@ export default class BasePrompt {
     });
   }
 
-  handleInput(key, isRepeat = false) {
+  handleInput(input) {
     if (!this.visible) return null;
 
-    if (key === 'ArrowUp' || key === 'w' || key === 'W') {
-      if (!isRepeat) {
-        this.selectedIndex = Math.max(0, this.selectedIndex - 1);
-        return { action: 'select', value: this.selectedIndex };
-      }
+    if (input.justUp) {
+      this.selectedIndex = Math.max(0, this.selectedIndex - 1);
+      return { action: 'select', value: this.selectedIndex };
     }
-    if (key === 'ArrowDown' || key === 's' || key === 'S') {
-      if (!isRepeat) {
-        this.selectedIndex = Math.min(this.options.length - 1, this.selectedIndex + 1);
-        return { action: 'select' };
-      }
+    if (input.justDown) {
+      this.selectedIndex = Math.min(this.options.length - 1, this.selectedIndex + 1);
+      return { action: 'select' };
     }
-    if (key === 'Enter' && !isRepeat) {
+    if (input.justEnter) {
       this.hide();
       return { action: this.options[this.selectedIndex].action };
     }
-    if (key === 'Escape' && !isRepeat) {
+    if (input.justEscape) {
       this.hide();
       return { action: 'cancel' };
     }
