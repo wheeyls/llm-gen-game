@@ -71,8 +71,7 @@ export default class World {
             )
           );
         } else if (cell === '1' || cell === '2' || cell === '3') {
-          // Security doors with different colors
-          // Security doors with different types
+          // Security doors
           this.walls.push(
             new Wall(
               offsetX + x * this.cellSize,
@@ -80,6 +79,17 @@ export default class World {
               this.cellSize,
               this.cellSize,
               `door${cell}`
+            )
+          );
+        } else if (cell === 'E') {
+          // Exit
+          this.walls.push(
+            new Wall(
+              offsetX + x * this.cellSize,
+              offsetY + y * this.cellSize,
+              this.cellSize,
+              this.cellSize,
+              'exit'
             )
           );
         }
@@ -188,16 +198,6 @@ export default class World {
     // Draw items
     this.items.forEach(item => item.draw(ctx));
 
-    // Draw exit if in bottom-right room
-    if (this.gridX === 2 && this.gridY === 2) {
-      ctx.fillStyle = '#4CAF50';
-      const exitX = (this.width - 10 * this.cellSize) / 2 + 4 * this.cellSize;
-      const exitY = (this.height - 10 * this.cellSize) / 2 + 4 * this.cellSize;
-      ctx.fillRect(exitX, exitY, this.cellSize, this.cellSize);
-      ctx.fillStyle = 'white';
-      ctx.font = '20px Arial';
-      ctx.fillText('EXIT', exitX + 10, exitY + 35);
-    }
 
     // Draw player
     this.player.draw(ctx);
@@ -362,11 +362,6 @@ World.prototype.handleInput = function (key) {
   }
 };
 
-World.prototype.placeExit = function () {
-  this.exit = new Item(4 * this.cellSize, 4 * this.cellSize, 'exit', 'green');
-  this.exit.width = this.cellSize;
-  this.exit.height = this.cellSize;
-};
 
 World.prototype.scatterInitialItems = function () {
   const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];

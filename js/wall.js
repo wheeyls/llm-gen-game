@@ -6,6 +6,7 @@ export default class Wall extends Sprite {
     door1: '#4CAF50',  // Basic security - green
     door2: '#FFC107',  // Medium security - yellow
     door3: '#F44336',  // High security - red
+    exit: '#4CAF50',   // Exit - green
   };
 
   constructor(x, y, width, height, type = 'wall') {
@@ -17,7 +18,7 @@ export default class Wall extends Sprite {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    // Draw door number if this is a security door
+    // Draw text based on type
     if (this.isSecurityDoor()) {
       ctx.fillStyle = 'white';
       ctx.font = 'bold 24px Arial';
@@ -28,9 +29,21 @@ export default class Wall extends Sprite {
         this.x + this.width / 2,
         this.y + this.height / 2
       );
-      ctx.textAlign = 'left';  // Reset alignment
-      ctx.textBaseline = 'alphabetic';  // Reset baseline
+    } else if (this.type === 'exit') {
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 20px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(
+        'EXIT',
+        this.x + this.width / 2,
+        this.y + this.height / 2
+      );
     }
+    
+    // Reset text properties
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
   }
 
   isSecurityDoor() {
