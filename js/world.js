@@ -67,9 +67,9 @@ export default class World {
               '#333'
             )
           );
-        } else if (cell === 'D' || cell === 'E' || cell === 'F') {
+        } else if (cell === '1' || cell === '2' || cell === '3') {
           // Security doors with different colors
-          const doorColor = cell === 'D' ? '#4CAF50' : cell === 'E' ? '#FFC107' : '#F44336';
+          const doorColor = cell === '1' ? '#4CAF50' : cell === '2' ? '#FFC107' : '#F44336';
           this.walls.push(
             new Wall(
               offsetX + x * this.cellSize,
@@ -251,7 +251,7 @@ World.generateRoom = function (x, y) {
   // Add exhibit area with security door
   // Different tiers based on position (higher tier rooms are deeper in)
   const tier = Math.min(x + y, 3);  // 0-3 tier system
-  const doorSymbol = tier === 0 ? 'D' : tier === 1 ? 'E' : 'F'; // D=basic, E=medium, F=high security
+  const doorSymbol = (tier + 1).toString(); // 1=basic, 2=medium, 3=high security
 
   // Create exhibit room in center
   const exhibitStart = 3;
@@ -271,7 +271,7 @@ World.generateRoom = function (x, y) {
 
   // Add exit to bottom-right room
   if (x === 2 && y === 2) {
-    room[4][4] = 'E'; // Place exit in a fixed position
+    room[4][4] = 'E'; // E still means exit
   }
 
   // Add doors based on position (wider doors)
