@@ -34,7 +34,7 @@ export default class World {
     this.roomItems = {};
 
     // Scatter items across all rooms once at the start
-    this.scatterInitialItems();
+    // this.scatterInitialItems();
 
     // Load initial room
     this.loadCurrentRoom();
