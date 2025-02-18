@@ -1,4 +1,5 @@
 import Sprite from './sprite.js';
+import { DayOfTheDeadDrawings } from './drawings.js';
 
 export default class Wall extends Sprite {
   static COLORS = {
@@ -7,7 +8,7 @@ export default class Wall extends Sprite {
     forgotten: '#8e6e95',     // Forgotten memory barriers
     void: '#d4a373',          // Gaps needing marigold bridges  
     confusion: '#7209b7',     // Disorienting memory areas
-    ofrenda: '#f72585'        // Destination altar
+    ofrenda: DayOfTheDeadDrawings.colors.altarPink  // Destination altar
   };
 
   constructor(x, y, width, height, type = 'wall') {
