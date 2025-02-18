@@ -113,24 +113,52 @@ export const DayOfTheDeadDrawings = {
   },
 
   soulGroom(ctx, size) {
-    // Base skull
-    this.sugarSkull(ctx, size);
-    
-    // Add groom's bow tie
-    ctx.fillStyle = '#000000';
+    // Profile skull shape
+    ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
-    ctx.moveTo(-size/4, size/3);
-    ctx.lineTo(size/4, size/3);
-    ctx.lineTo(size/3, size/2);
-    ctx.lineTo(size/4, size/3);
-    ctx.lineTo(-size/4, size/3);
-    ctx.lineTo(-size/3, size/2);
-    ctx.closePath();
+    ctx.ellipse(0, 0, size/2, size/1.8, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Add top hat
-    ctx.fillRect(-size/3, -size/2, size/1.5, size/6);
-    ctx.fillRect(-size/4, -size/1.5, size/2, size/3);
+    // Profile jaw
+    ctx.beginPath();
+    ctx.moveTo(size/4, 0);
+    ctx.quadraticCurveTo(size/3, size/3, 0, size/3);
+    ctx.stroke();
+    
+    // Eye socket (profile)
+    ctx.strokeStyle = this.colors.purple;
+    ctx.lineWidth = size/30;
+    ctx.beginPath();
+    ctx.ellipse(size/4, -size/6, size/6, size/4, -Math.PI/6, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Decorative forehead pattern
+    ctx.beginPath();
+    ctx.moveTo(size/4, -size/3);
+    ctx.quadraticCurveTo(0, -size/2, -size/4, -size/3);
+    ctx.stroke();
+    
+    // Top hat (profile)
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(-size/4, -size/1.2, size/2, size/6);
+    ctx.fillRect(-size/6, -size, size/3, size/3);
+    
+    // Mustache (profile)
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = size/20;
+    ctx.beginPath();
+    ctx.moveTo(size/4, size/8);
+    ctx.quadraticCurveTo(size/2, size/8, size/2, 0);
+    ctx.stroke();
+    
+    // Bow tie (profile)
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.moveTo(0, size/3);
+    ctx.lineTo(size/3, size/2);
+    ctx.lineTo(0, size/1.5);
+    ctx.closePath();
+    ctx.fill();
   },
 
   soulBride(ctx, size) {
