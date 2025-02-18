@@ -44,9 +44,21 @@ export default class PathFinder {
     };
 
     // Check for wall collisions
-    return !this.world.walls.some(wall => 
+    const collision = this.world.walls.find(wall => 
       this.world.intersects(wall.getBounds(), bounds)
     );
+
+    if (collision) {
+      console.log('Position not walkable due to wall:', {
+        gridPos: { x: gridX, y: gridY },
+        worldBounds: bounds,
+        wall: collision
+      });
+      // Allow walking to ofrenda
+      return collision.type === 'ofrenda';
+    }
+
+    return true;
   }
 
   // Get valid neighbors for a grid position
