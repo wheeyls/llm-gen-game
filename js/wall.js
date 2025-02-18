@@ -8,7 +8,8 @@ export default class Wall extends Sprite {
     forgotten: '#8e6e95',     // Forgotten memory barriers
     void: '#d4a373',          // Gaps needing marigold bridges  
     confusion: '#7209b7',     // Disorienting memory areas
-    ofrenda: DayOfTheDeadDrawings.colors.altarPink  // Destination altar
+    ofrenda: DayOfTheDeadDrawings.colors.altarPink,  // Destination altar
+    portal: '#4A0404'         // Deep red spirit portal
   };
 
   constructor(x, y, width, height, type = 'wall') {
