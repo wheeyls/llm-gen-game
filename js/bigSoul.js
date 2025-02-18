@@ -151,37 +151,43 @@ export default class BigSoul extends Soul {
   }
 
   draw(ctx) {
-    // Draw soul glow
-    const gradient = ctx.createRadialGradient(
-      this.x + this.width/2, this.y + this.height/2, 0,
-      this.x + this.width/2, this.y + this.height/2, this.width
-    );
-    gradient.addColorStop(0, 'rgba(228, 168, 83, 0.8)');
-    gradient.addColorStop(0.6, 'rgba(228, 168, 83, 0.3)');
-    gradient.addColorStop(1, 'rgba(228, 168, 83, 0)');
-
     ctx.save();
     ctx.translate(this.x + this.width/2, this.y + this.height/2);
     ctx.rotate(this.rotation);
+
+    // Pulse effect
+    const pulseScale = 1 + Math.sin(Date.now() / 200) * 0.1;
     
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(0, 0, this.width, 0, Math.PI * 2);
-    ctx.fill();
+    // Draw outer glow particles
+    const particleCount = 12;
+    const baseRadius = this.width * 0.8;
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (i / particleCount) * Math.PI * 2 + Date.now() / 1000;
+      const distance = baseRadius * (1 + Math.sin(Date.now() / 500 + i) * 0.2);
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+      
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, this.width/3);
+      gradient.addColorStop(0, 'rgba(147, 112, 219, 0.6)'); // Purple
+      gradient.addColorStop(0.5, 'rgba(147, 112, 219, 0.2)');
+      gradient.addColorStop(1, 'rgba(147, 112, 219, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, this.width/3 * pulseScale, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-    // Draw soul core
-    ctx.fillStyle = '#E4A853';
+    // Draw core with pulsing effect
+    const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.width/2);
+    coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+    coreGradient.addColorStop(0.5, 'rgba(147, 112, 219, 0.7)');
+    coreGradient.addColorStop(1, 'rgba(147, 112, 219, 0.1)');
+    
+    ctx.fillStyle = coreGradient;
     ctx.beginPath();
-    ctx.arc(0, 0, this.width/2, 0, Math.PI * 2);
+    ctx.arc(0, 0, this.width/3 * pulseScale, 0, Math.PI * 2);
     ctx.fill();
-
-    // Add decorative swirls
-    ctx.rotate(Date.now() / 1000);
-    DayOfTheDeadDrawings.papelPicado(
-      ctx,
-      this.width * 1.2,
-      'rgba(255, 255, 255, 0.3)'
-    );
 
     ctx.restore();
   }

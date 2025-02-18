@@ -97,8 +97,8 @@ export default class World {
 
       if (isClear) {
         const soul = new BigSoul(
-          wall.x + wall.width * 1.1 + (Math.random() - 0.5) * 10,
-          wall.y + (Math.random() - 0.5) * 10,
+          wall.x + wall.width,
+          wall.y,
           this.cellSize,
           this
         );

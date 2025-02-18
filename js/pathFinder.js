@@ -14,6 +14,12 @@ export default class PathFinder {
     };
   }
 
+  get walls() {
+    this._walls = this._walls || this.world.walls.filter(wall => wall.type === 'wall');
+
+    return this._walls;
+  }
+
   // Convert grid coordinates to world coordinates (center of cell)
   toWorldCoord(gridX, gridY) {
     const offsetX = (this.world.width - 10 * this.gridSize) / 2;
@@ -44,7 +50,7 @@ export default class PathFinder {
     };
 
     // Check for wall collisions
-    const collision = this.world.walls.find(wall => 
+    const collision = this.walls.find(wall => 
       this.world.intersects(wall.getBounds(), bounds)
     );
 
@@ -108,7 +114,7 @@ export default class PathFinder {
     });
 
     // Always allow end position if it's the ofrenda
-    const endWall = this.world.walls.find(wall => 
+    const endWall = this.walls.find(wall => 
       this.world.intersects(wall.getBounds(), {
         left: endX - this.gridSize/2,
         right: endX + this.gridSize/2,
