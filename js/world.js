@@ -116,33 +116,37 @@ export default class World {
     const collisions = this.checkCollisions(sprite);
 
     for (const wall of collisions) {
-      const spriteBox = sprite.getBounds();
-      const wallBox = wall.getBounds();
+      if (sprite === this.player) {
+        if (wall.collideWithPlayer(sprite)) {
+          const spriteBox = sprite.getBounds();
+          const wallBox = wall.getBounds();
 
-      // Calculate overlap on each axis
-      const overlapX = Math.min(spriteBox.right - wallBox.left, wallBox.right - spriteBox.left);
-      const overlapY = Math.min(spriteBox.bottom - wallBox.top, wallBox.bottom - spriteBox.top);
+          // Calculate overlap on each axis
+          const overlapX = Math.min(spriteBox.right - wallBox.left, wallBox.right - spriteBox.left);
+          const overlapY = Math.min(spriteBox.bottom - wallBox.top, wallBox.bottom - spriteBox.top);
 
-      // Push out in direction of smallest overlap
-      if (overlapX < overlapY) {
-        // Push horizontally
-        if (spriteBox.left < wallBox.left) {
-          sprite.x = wallBox.left - sprite.width;
-        } else {
-          sprite.x = wallBox.right;
+          // Push out in direction of smallest overlap
+          if (overlapX < overlapY) {
+            // Push horizontally
+            if (spriteBox.left < wallBox.left) {
+              sprite.x = wallBox.left - sprite.width;
+            } else {
+              sprite.x = wallBox.right;
+            }
+          } else {
+            // Push vertically
+            if (spriteBox.top < wallBox.top) {
+              sprite.y = wallBox.top - sprite.height;
+            } else {
+              sprite.y = wallBox.bottom;
+            }
+          }
         }
-      } else {
-        // Push vertically
-        if (spriteBox.top < wallBox.top) {
-          sprite.y = wallBox.top - sprite.height;
-        } else {
-          sprite.y = wallBox.bottom;
-        }
-      }
 
-      if (wall.type === 'exit') {
-        this.exitPrompt = new ExitPrompt(this.inventory);
-        this.state.transition(GameState.EXIT_PROMPT);
+        if (wall.type === 'exit') {
+          this.exitPrompt = new ExitPrompt(this.inventory);
+          this.state.transition(GameState.EXIT_PROMPT);
+        }
       }
     }
   }
