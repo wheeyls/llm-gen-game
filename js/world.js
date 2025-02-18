@@ -18,7 +18,6 @@ export default class World {
     this.soulCount = 5;
     this.souls = [];
     this.ofrendaPosition = null;
-    this.inventory = new Array(5).fill(null);
     this.state = new GameState();
     this.itemPrompt = null;
     this.ignoredItems = new Set(); // Track items we're ignoring
@@ -222,7 +221,7 @@ export default class World {
     ctx.fillText(`Screen: ${this.gridX},${this.gridY}`, 10, 30);
 
     // Draw inventory
-    this.drawInventory(ctx);
+    this.player.drawInventory(ctx, this.width, this.height);
 
     // Draw item prompt if active
     if (this.itemPrompt) {
@@ -232,40 +231,6 @@ export default class World {
 }
 
 // Add instance methods to World prototype
-World.prototype.drawInventory = function (ctx) {
-  const slotSize = 40;
-  const padding = 10;
-  const startX = this.width - (slotSize + padding) * 5 - padding;
-  const startY = this.height - slotSize - padding;
-
-  // Draw inventory slots
-  for (let i = 0; i < 5; i++) {
-    const x = startX + (slotSize + padding) * i;
-    ctx.fillStyle = this.itemPrompt && i === this.itemPrompt.selectedSlot ? '#aaa' : '#ddd';
-    ctx.fillRect(x, startY, slotSize, slotSize);
-    ctx.strokeStyle = '#333';
-    ctx.strokeRect(x, startY, slotSize, slotSize);
-
-    // Draw item if slot is filled
-    if (this.inventory[i]) {
-      ctx.fillStyle = this.inventory[i].color;
-      const itemSize = slotSize * 0.6;
-      const itemX = x + (slotSize - itemSize) / 2;
-      const itemY = startY + (slotSize - itemSize) / 2;
-      ctx.fillRect(itemX, itemY, itemSize, itemSize);
-
-      // Draw item label
-      ctx.fillStyle = 'black';
-      ctx.font = '12px Arial';
-      ctx.fillText(this.inventory[i].type[0], itemX + itemSize / 3, itemY + itemSize / 1.5);
-    }
-
-    // Draw slot number
-    ctx.fillStyle = 'black';
-    ctx.font = '12px Arial';
-    ctx.fillText(i + 1, x + 5, startY + slotSize - 5);
-  }
-};
 
 World.prototype.checkItemCollision = function () {
   const playerBounds = this.player.getBounds();
@@ -324,10 +289,7 @@ World.prototype.handleInput = function (input) {
       } else if (result) {
         if (result.action === 'confirm') {
           // Store the old item if there is one
-          const oldItem = this.inventory[result.value];
-
-          // Pick up new item
-          this.inventory[result.value] = this.state.stateData.item;
+          const oldItem = this.player.addItem(result.value, this.state.stateData.item);
 
           // Remove item from current room's items
           const roomKey = `${this.gridX},${this.gridY}`;
