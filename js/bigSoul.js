@@ -156,15 +156,33 @@ export default class BigSoul extends Soul {
     const particleCount = 12;
     const baseRadius = this.width * 0.8;
     for (let i = 0; i < particleCount; i++) {
-      const angle = (i / particleCount) * Math.PI * 2 + Date.now() / 1000;
-      const distance = baseRadius * (1 + Math.sin(Date.now() / 500 + i) * 0.2);
+      let angle = (i / particleCount) * Math.PI * 2;
+      if (this.confused) {
+        // Add erratic movement when confused
+        angle += Math.sin(Date.now() / 200 + i) * 0.5;
+      }
+      angle += Date.now() / 1000;
+      
+      let distance = baseRadius * (1 + Math.sin(Date.now() / 500 + i) * 0.2);
+      if (this.confused) {
+        // Particles move in and out more dramatically when confused
+        distance *= 1 + Math.sin(Date.now() / 300 + i * 2) * 0.3;
+      }
+      
       const x = Math.cos(angle) * distance;
       const y = Math.sin(angle) * distance;
       
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, this.width/3);
-      gradient.addColorStop(0, 'rgba(147, 112, 219, 0.6)'); // Purple
-      gradient.addColorStop(0.5, 'rgba(147, 112, 219, 0.2)');
-      gradient.addColorStop(1, 'rgba(147, 112, 219, 0)');
+      if (this.confused) {
+        // Use more reddish colors when confused
+        gradient.addColorStop(0, 'rgba(219, 112, 147, 0.6)'); // Pink
+        gradient.addColorStop(0.5, 'rgba(219, 112, 147, 0.2)');
+        gradient.addColorStop(1, 'rgba(219, 112, 147, 0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(147, 112, 219, 0.6)'); // Purple
+        gradient.addColorStop(0.5, 'rgba(147, 112, 219, 0.2)');
+        gradient.addColorStop(1, 'rgba(147, 112, 219, 0)');
+      }
       
       ctx.fillStyle = gradient;
       ctx.beginPath();
@@ -174,9 +192,15 @@ export default class BigSoul extends Soul {
 
     // Draw core with pulsing effect
     const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.width/2);
-    coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-    coreGradient.addColorStop(0.5, 'rgba(147, 112, 219, 0.7)');
-    coreGradient.addColorStop(1, 'rgba(147, 112, 219, 0.1)');
+    if (this.confused) {
+      coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      coreGradient.addColorStop(0.5, 'rgba(219, 112, 147, 0.7)'); // Pink when confused
+      coreGradient.addColorStop(1, 'rgba(219, 112, 147, 0.1)');
+    } else {
+      coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      coreGradient.addColorStop(0.5, 'rgba(147, 112, 219, 0.7)'); // Purple when normal
+      coreGradient.addColorStop(1, 'rgba(147, 112, 219, 0.1)');
+    }
     
     ctx.fillStyle = coreGradient;
     ctx.beginPath();
