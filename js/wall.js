@@ -3,7 +3,7 @@ import { DayOfTheDeadDrawings } from './drawings.js';
 
 export default class Wall extends Sprite {
   static COLORS = {
-    wall: '#333333',          // Basic stone wall
+    wall: '#2E1810',          // Rich brown adobe wall color
     darkness: '#1a0f2e',      // Dark areas needing candle light
     forgotten: '#8e6e95',     // Forgotten memory barriers
     void: '#d4a373',          // Gaps needing marigold bridges  

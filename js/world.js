@@ -11,7 +11,7 @@ export default class World {
     this.game = game;
     this.width = width;
     this.height = height;
-    this.player = new Sprite(width / 2, height / 2, 32, 32, 'blue');
+    this.player = new Sprite(width / 2, height / 2, 32, 32, '#E4A853'); // Warm golden soul color
     this.entities = [];
     this.walls = [];
     this.items = [];
@@ -137,8 +137,9 @@ export default class World {
   }
 
   draw(ctx) {
-    // Clear the canvas
-    ctx.clearRect(0, 0, this.width, this.height);
+    // Fill with warm background color
+    ctx.fillStyle = '#FDF6E3';  // Soft cream background
+    ctx.fillRect(0, 0, this.width, this.height);
 
     // Draw walls
     this.walls.forEach(wall => wall.draw(ctx));
