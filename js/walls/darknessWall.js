@@ -4,17 +4,16 @@ import { DayOfTheDeadDrawings } from '../drawings.js';
 export default class DarknessWall extends Wall {
   constructor(x, y, width, height) {
     super(x, y, width, height);
-    this.particles = Array.from({ length: 50 }, () => ({
+    this.particles = Array.from({ length: 30 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 3 + 1,
-      speed: Math.random() * 0.5 + 0.2,
+      size: Math.random() * 2 + 0.5,
+      speed: Math.random() * 0.2 + 0.1,
       angle: Math.random() * Math.PI * 2,
-      dispersionSpeed: 0
+      opacity: Math.random() * 0.3 + 0.1
     }));
-    this.isDispelled = false;
-    this.dispelTimer = 0;
-    this.dispelDuration = 10000; // 10 seconds
+    this.candleNearby = false;
+    this.dispelStrength = 0;
     this.opacity = 1;
   }
 
@@ -27,23 +26,17 @@ export default class DarknessWall extends Wall {
   }
 
   collideWithPlayer(player) {
-    if (player.hasCandle() && !this.isDispelled) {
-      this.isDispelled = true;
-      this.dispelTimer = 0;
-      // Initialize particle dispersion
-      this.particles.forEach(particle => {
-        const dx = particle.x - this.width/2;
-        const dy = particle.y - this.height/2;
-        const angle = Math.atan2(dy, dx);
-        particle.dispersionSpeed = Math.random() * 2 + 1;
-        particle.angle = angle;
-      });
+    if (player.hasCandle()) {
+      this.candleNearby = true;
+      this.dispelStrength = Math.min(1, this.dispelStrength + 0.1);
+    } else {
+      this.candleNearby = false;
     }
     return false; // Players can pass through
   }
 
   collideWithSoul(soul) {
-    if (!this.isDispelled) {
+    if (this.dispelStrength === 0) {
       soul.frighten(this); // only frighten when not dispelled
     }
     return false; // not solid to souls
@@ -51,21 +44,12 @@ export default class DarknessWall extends Wall {
 
   draw(ctx) {
     // Update dispel effect
-    if (this.isDispelled) {
-      this.dispelTimer += 16; // Approximate for one frame
-      if (this.dispelTimer >= this.dispelDuration) {
-        this.isDispelled = false;
-        this.opacity = 1;
-        // Reset particles
-        this.particles.forEach(particle => {
-          particle.x = Math.random() * this.width;
-          particle.y = Math.random() * this.height;
-          particle.dispersionSpeed = 0;
-        });
-      } else {
-        this.opacity = (this.dispelTimer / this.dispelDuration);
-      }
+    if (!this.candleNearby) {
+      this.dispelStrength = Math.max(0, this.dispelStrength - 0.02);
     }
+    
+    // Calculate darkness opacity based on dispel strength
+    this.opacity = 1 - this.dispelStrength * 0.7;
 
     // Override parent draw method completely
     ctx.fillStyle = `rgba(26, 15, 46, ${this.opacity * 0.7})`;
@@ -88,15 +72,14 @@ export default class DarknessWall extends Wall {
     ctx.translate(this.x, this.y);
     
     this.particles.forEach(particle => {
-      // Update particle position
-      if (this.isDispelled) {
-        // Disperse particles outward
-        particle.x += Math.cos(particle.angle) * (particle.speed + particle.dispersionSpeed);
-        particle.y += Math.sin(particle.angle) * (particle.speed + particle.dispersionSpeed);
-      } else {
-        particle.x += Math.cos(particle.angle) * particle.speed;
-        particle.y += Math.sin(particle.angle) * particle.speed;
-      }
+      // Update particle position with gentle swaying motion
+      particle.x += Math.cos(particle.angle + Date.now() / 2000) * particle.speed;
+      particle.y += Math.sin(particle.angle + Date.now() / 2000) * particle.speed;
+      
+      // Adjust particle opacity based on dispel strength
+      const particleOpacity = this.dispelStrength > 0 
+        ? Math.max(0, particle.opacity - this.dispelStrength * 0.5)
+        : particle.opacity;
       
       // Wrap particles around
       if (particle.x < 0) particle.x = this.width;
