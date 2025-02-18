@@ -24,7 +24,12 @@ export default class BigSoul extends Soul {
     const separation = this.getSeparation(souls);
     
     if (this.confused) {
-      this.shakeAmount = Math.sin(Date.now() / 50) * this.confusionIntensity * 3;
+      // Only shake for the first second of confusion
+      if (this.confusionTimer < 1000) {
+        this.shakeAmount = Math.sin(Date.now() / 30) * this.confusionIntensity * 4;
+      } else {
+        this.shakeAmount = 0;
+      }
       
       // Wander away from target more deliberately
       const angleFromTarget = Math.atan2(this.y - target.y, this.x - target.x);
