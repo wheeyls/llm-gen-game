@@ -1,10 +1,11 @@
 import Soul from './soul.js';
 import { DayOfTheDeadDrawings } from './drawings.js';
+import PathFinder from './pathFinder.js';
 
 const SOUL_TYPES = ['groom', 'bride', 'abuela'];
 
 export default class BigSoul extends Soul {
-  constructor(x, y, cellSize) {
+  constructor(x, y, cellSize, world) {
     super(x, y, cellSize, cellSize);
     this.maxSpeed = 1.0;
     this.acceleration = 0.03;
@@ -12,13 +13,12 @@ export default class BigSoul extends Soul {
     this.confusionDuration = 5000;
     this.rotation = 0;
     this.targetRotation = 0;
-    this.confusedTarget = null;
     this.rotationSpeed = 0.1;
     this.shakeAmount = 0;
-    this.pathMode = 'horizontal';
-    this.isRotating = false;
-    this.movementDelay = 500; // ms to wait after rotation before moving
-    this.movementTimer = 0;
+    this.world = world;
+    this.pathFinder = new PathFinder(world);
+    this.currentPath = null;
+    this.pathIndex = 0;
   }
 
   flock(souls, target) {
