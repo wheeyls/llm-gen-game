@@ -43,16 +43,10 @@ export default class Wall extends Sprite {
         DayOfTheDeadDrawings.papelPicado(ctx, size, DayOfTheDeadDrawings.colors.pink);
         break;
       case 'ofrenda':
-        // Draw both marigold and candles for altar
-        DayOfTheDeadDrawings.marigold(ctx, size, DayOfTheDeadDrawings.colors.orange);
-        ctx.translate(0, -size/2);
-        DayOfTheDeadDrawings.sugarSkull(ctx, size/2);
+        DayOfTheDeadDrawings.ofrenda(ctx, size);
         break;
       case 'portal':
-        // Draw spirit portal
-        DayOfTheDeadDrawings.sugarSkull(ctx, size);
-        ctx.rotate(Math.PI / 4);
-        DayOfTheDeadDrawings.papelPicado(ctx, size * 1.2, DayOfTheDeadDrawings.colors.purple);
+        DayOfTheDeadDrawings.portal(ctx, size);
         break;
     }
 
