@@ -140,11 +140,6 @@ export default class World {
             }
           }
         }
-
-        if (wall.type === 'exit') {
-          this.exitPrompt = new ExitPrompt(this.inventory);
-          this.state.transition(GameState.EXIT_PROMPT);
-        }
       }
     }
   }
