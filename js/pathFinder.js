@@ -28,6 +28,7 @@ export default class PathFinder {
   isWalkable(gridX, gridY) {
     // Check grid bounds
     if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+      console.log('Position out of bounds:', { gridX, gridY });
       return false;
     }
 
@@ -77,6 +78,22 @@ export default class PathFinder {
   findPath(startX, startY, endX, endY) {
     const start = this.toGridCoord(startX, startY);
     const end = this.toGridCoord(endX, endY);
+    
+    console.log('PathFinding:', {
+      worldStart: { x: startX, y: startY },
+      worldEnd: { x: endX, y: endY },
+      gridStart: start,
+      gridEnd: end
+    });
+
+    if (!this.isWalkable(start.x, start.y)) {
+      console.log('Start position not walkable:', start);
+      return null;
+    }
+    if (!this.isWalkable(end.x, end.y)) {
+      console.log('End position not walkable:', end);
+      return null;
+    }
     
     const openSet = new Set([JSON.stringify(start)]);
     const cameFrom = new Map();

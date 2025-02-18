@@ -44,10 +44,16 @@ export default class BigSoul extends Soul {
     // Update path periodically or if we don't have one
     this.pathUpdateTimer += 16; // Approximate for one frame
     if (!this.currentPath || this.pathUpdateTimer >= this.pathUpdateInterval) {
+      console.log('Attempting to find path from', 
+        { x: this.x, y: this.y }, 
+        'to', 
+        { x: target.x, y: target.y }
+      );
       this.currentPath = this.pathFinder.findPath(
         this.x, this.y,
         target.x, target.y
       );
+      console.log('Path found:', this.currentPath);
       this.pathIndex = 0;
       this.pathUpdateTimer = 0;
     }
