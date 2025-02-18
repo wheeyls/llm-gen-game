@@ -63,12 +63,12 @@ export default class World {
   }
 
   findOfrendaPosition() {
-    // defaults to center of next room if not found
-    this.ofrendaPosition = { x: this.cellSize * 15, y: this.cellSize * 5 };
+    // defaults to center of room if not found
+    this.flockTarget = { x: this.cellSize * 5, y: this.cellSize * 15 };
 
     for (const wall of this.walls) {
       if (wall.type === 'ofrenda') {
-        this.ofrendaPosition = {
+        this.flockTarget = {
           x: wall.x + wall.width / 2,
           y: wall.y + wall.height / 2
         };
@@ -80,9 +80,10 @@ export default class World {
   spawnSoulsAtPortals() {
     for (const wall of this.walls) {
       if (wall.type === 'portal') {
+        // Add random offset to prevent exact overlap
         const soul = new Soul(
-          wall.x + wall.width * 1.1,
-          wall.y
+          wall.x + wall.width * 1.1 + (Math.random() - 0.5) * 20,
+          wall.y + (Math.random() - 0.5) * 20
         );
         this.souls.push(soul);
       }
@@ -136,22 +137,10 @@ export default class World {
         this.checkItemCollision();
 
         // Update souls
-        if (this.ofrendaPosition) {
+        if (this.flockTarget) {
           this.souls.forEach(soul => {
-            soul.flock(this.souls, this.ofrendaPosition);
+            soul.flock(this.souls, this.flockTarget);
             soul.update(deltaTime);
-
-            // Remove souls that reach the ofrenda
-            const distance = Math.hypot(
-              soul.x - this.ofrendaPosition.x,
-              soul.y - this.ofrendaPosition.y
-            );
-            if (distance < 20) {
-              const index = this.souls.indexOf(soul);
-              if (index > -1) {
-                this.souls.splice(index, 1);
-              }
-            }
           });
         }
 
