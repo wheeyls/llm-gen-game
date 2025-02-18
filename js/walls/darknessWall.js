@@ -30,20 +30,27 @@ export default class DarknessWall extends Wall {
     return false; // not solid to souls
   }
 
-  drawImage(ctx) {
+  draw(ctx) {
+    // Override parent draw method completely
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+
     // Create dark fog effect
     const gradient = ctx.createRadialGradient(
-      this.width/2, this.height/2, 0,
-      this.width/2, this.height/2, this.width/2
+      this.x + this.width/2, this.y + this.height/2, 0,
+      this.x + this.width/2, this.y + this.height/2, this.width/2
     );
     gradient.addColorStop(0, 'rgba(26, 15, 46, 0.1)');
     gradient.addColorStop(1, 'rgba(26, 15, 46, 0.8)');
     
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.fillRect(this.x, this.y, this.width, this.height);
 
     // Update and draw particles
     ctx.fillStyle = 'rgba(26, 15, 46, 0.3)';
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    
     this.particles.forEach(particle => {
       // Update particle position
       particle.x += Math.cos(particle.angle) * particle.speed;
@@ -76,5 +83,7 @@ export default class DarknessWall extends Wall {
       }
       ctx.stroke();
     }
+    
+    ctx.restore();
   }
 }
