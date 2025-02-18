@@ -43,6 +43,9 @@ export default class DarknessWall extends Wall {
   }
 
   draw(ctx) {
+    // Reset candle detection each frame
+    this.candleNearby = false;
+    
     // Update dispel effect
     if (!this.candleNearby) {
       this.dispelStrength = Math.max(0, this.dispelStrength - 0.02);
