@@ -54,6 +54,21 @@ export default class World {
     const roomKey = `${this.gridX},${this.gridY}`;
     this.items = this.roomItems[roomKey] || [];
 
+    // Add candle to top right corner if room is empty
+    if (this.items.length === 0) {
+      const candle = new Item(
+        this.width - this.cellSize * 2,  // X position
+        this.cellSize,                    // Y position
+        'candle',
+        '#FFD700'  // Golden color for candle
+      );
+      this.items.push(candle);
+      if (!this.roomItems[roomKey]) {
+        this.roomItems[roomKey] = [];
+      }
+      this.roomItems[roomKey].push(candle);
+    }
+
     // Find ofrenda and spawn souls
     this.findOfrendaPosition();
 
