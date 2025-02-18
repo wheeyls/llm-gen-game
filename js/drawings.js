@@ -112,6 +112,82 @@ export const DayOfTheDeadDrawings = {
     }
   },
 
+  soulGroom(ctx, size) {
+    // Base skull
+    this.sugarSkull(ctx, size);
+    
+    // Add groom's bow tie
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.moveTo(-size/4, size/3);
+    ctx.lineTo(size/4, size/3);
+    ctx.lineTo(size/3, size/2);
+    ctx.lineTo(size/4, size/3);
+    ctx.lineTo(-size/4, size/3);
+    ctx.lineTo(-size/3, size/2);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Add top hat
+    ctx.fillRect(-size/3, -size/2, size/1.5, size/6);
+    ctx.fillRect(-size/4, -size/1.5, size/2, size/3);
+  },
+
+  soulBride(ctx, size) {
+    // Base skull
+    this.sugarSkull(ctx, size);
+    
+    // Add veil
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = size/20;
+    ctx.beginPath();
+    for(let i = 0; i < 5; i++) {
+      const waveHeight = size/8;
+      const startX = -size/2 + (i * size/4);
+      ctx.moveTo(startX, -size/3);
+      ctx.quadraticCurveTo(
+        startX + size/8, -size/3 - waveHeight,
+        startX + size/4, -size/3
+      );
+    }
+    ctx.stroke();
+    
+    // Add flower crown
+    for(let i = 0; i < 5; i++) {
+      ctx.save();
+      ctx.translate(-size/2 + (i * size/4), -size/2);
+      ctx.scale(0.3, 0.3);
+      this.marigold(ctx, size, this.colors.orange);
+      ctx.restore();
+    }
+  },
+
+  soulAbuela(ctx, size) {
+    // Base skull
+    this.sugarSkull(ctx, size);
+    
+    // Add glasses
+    ctx.strokeStyle = '#666666';
+    ctx.lineWidth = size/30;
+    ctx.beginPath();
+    // Left lens
+    ctx.arc(-size/4, -size/8, size/6, 0, Math.PI * 2);
+    // Right lens
+    ctx.arc(size/4, -size/8, size/6, 0, Math.PI * 2);
+    // Bridge
+    ctx.moveTo(-size/12, -size/8);
+    ctx.lineTo(size/12, -size/8);
+    ctx.stroke();
+    
+    // Add shawl
+    ctx.fillStyle = this.colors.purple;
+    ctx.beginPath();
+    ctx.moveTo(-size/2, 0);
+    ctx.quadraticCurveTo(0, size/2, size/2, 0);
+    ctx.quadraticCurveTo(0, size/4, -size/2, 0);
+    ctx.fill();
+  },
+
   ofrenda(ctx, size) {
     // Draw altar table
     ctx.fillStyle = '#8B4513'; // Wood color
