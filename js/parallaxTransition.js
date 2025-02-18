@@ -11,6 +11,7 @@ export default class ParallaxTransition {
     this.isTransitioning = false;
 
     // Update layers with Day of the Dead themed elements
+    this.backgroundColor = '#2E1810'; // Deep brown background for spiritual transition
     this.layers = [
       { 
         speed: 0.2, 
@@ -72,6 +73,10 @@ export default class ParallaxTransition {
   }
 
   draw(ctx) {
+    // Fill background
+    ctx.fillStyle = this.backgroundColor;
+    ctx.fillRect(0, 0, this.width, this.height);
+
     // Draw each parallax layer
     this.layers.forEach(layer => {
       layer.elements.forEach(element => {
