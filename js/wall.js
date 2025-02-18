@@ -2,11 +2,12 @@ import Sprite from './sprite.js';
 
 export default class Wall extends Sprite {
   static COLORS = {
-    wall: '#333',
-    door1: '#4CAF50',  // Basic security - green
-    door2: '#FFC107',  // Medium security - yellow
-    door3: '#F44336',  // High security - red
-    exit: '#4CAF50',   // Exit - green
+    wall: '#333333',          // Basic stone wall
+    darkness: '#1a0f2e',      // Dark areas needing candle light
+    forgotten: '#8e6e95',     // Forgotten memory barriers
+    void: '#d4a373',          // Gaps needing marigold bridges  
+    confusion: '#7209b7',     // Disorienting memory areas
+    ofrenda: '#f72585'        // Destination altar
   };
 
   constructor(x, y, width, height, type = 'wall') {
@@ -15,42 +16,39 @@ export default class Wall extends Sprite {
   }
 
   draw(ctx) {
+    // Base wall drawing
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    // Draw text based on type
-    if (this.isSecurityDoor()) {
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold 24px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(
-        this.getSecurityLevel(),
-        this.x + this.width / 2,
-        this.y + this.height / 2
-      );
-    } else if (this.type === 'exit') {
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold 20px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(
-        'EXIT',
-        this.x + this.width / 2,
-        this.y + this.height / 2
-      );
-    }
+    // Add identifying symbols
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     
+    const centerX = this.x + this.width / 2;
+    const centerY = this.y + this.height / 2;
+
+    switch(this.type) {
+      case 'darkness':
+        ctx.fillText('🕯️', centerX, centerY);  // Candle
+        break;
+      case 'forgotten':
+        ctx.fillText('📷', centerX, centerY);   // Photo
+        break;
+      case 'void':
+        ctx.fillText('🌸', centerX, centerY);   // Flower
+        break;
+      case 'confusion':
+        ctx.fillText('✂️', centerX, centerY);   // Scissors (for papel picado)
+        break;
+      case 'ofrenda':
+        ctx.fillText('🕯️🌸', centerX, centerY); // Altar symbols
+        break;
+    }
+
     // Reset text properties
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-  }
-
-  isSecurityDoor() {
-    return this.type.startsWith('door');
-  }
-
-  getSecurityLevel() {
-    return this.isSecurityDoor() ? parseInt(this.type.slice(4)) : 0;
   }
 }
