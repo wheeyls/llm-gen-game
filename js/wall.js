@@ -20,35 +20,34 @@ export default class Wall extends Sprite {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    // Add identifying symbols
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 20px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
+    const size = Math.min(this.width, this.height) * 0.6;
     const centerX = this.x + this.width / 2;
     const centerY = this.y + this.height / 2;
 
+    ctx.save();
+    ctx.translate(centerX, centerY);
+
     switch(this.type) {
       case 'darkness':
-        ctx.fillText('🕯️', centerX, centerY);  // Candle
+        DayOfTheDeadDrawings.sugarSkull(ctx, size);
         break;
       case 'forgotten':
-        ctx.fillText('📷', centerX, centerY);   // Photo
+        DayOfTheDeadDrawings.papelPicado(ctx, size, DayOfTheDeadDrawings.colors.pink);
         break;
       case 'void':
-        ctx.fillText('🌸', centerX, centerY);   // Flower
+        DayOfTheDeadDrawings.marigold(ctx, size, DayOfTheDeadDrawings.colors.orange);
         break;
       case 'confusion':
-        ctx.fillText('✂️', centerX, centerY);   // Scissors (for papel picado)
+        DayOfTheDeadDrawings.papelPicado(ctx, size, DayOfTheDeadDrawings.colors.pink);
         break;
       case 'ofrenda':
-        ctx.fillText('🕯️🌸', centerX, centerY); // Altar symbols
+        // Draw both marigold and candles for altar
+        DayOfTheDeadDrawings.marigold(ctx, size, DayOfTheDeadDrawings.colors.orange);
+        ctx.translate(0, -size/2);
+        DayOfTheDeadDrawings.sugarSkull(ctx, size/2);
         break;
     }
 
-    // Reset text properties
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
+    ctx.restore();
   }
 }
