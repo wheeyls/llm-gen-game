@@ -9,8 +9,13 @@ export default class DarknessWall extends Wall {
       y: Math.random() * height,
       size: Math.random() * 3 + 1,
       speed: Math.random() * 0.5 + 0.2,
-      angle: Math.random() * Math.PI * 2
+      angle: Math.random() * Math.PI * 2,
+      dispersionSpeed: 0
     }));
+    this.isDispelled = false;
+    this.dispelTimer = 0;
+    this.dispelDuration = 10000; // 10 seconds
+    this.opacity = 1;
   }
 
   get defaultColor() {
@@ -22,17 +27,48 @@ export default class DarknessWall extends Wall {
   }
 
   collideWithPlayer(player) {
+    if (player.hasCandle() && !this.isDispelled) {
+      this.isDispelled = true;
+      this.dispelTimer = 0;
+      // Initialize particle dispersion
+      this.particles.forEach(particle => {
+        const dx = particle.x - this.width/2;
+        const dy = particle.y - this.height/2;
+        const angle = Math.atan2(dy, dx);
+        particle.dispersionSpeed = Math.random() * 2 + 1;
+        particle.angle = angle;
+      });
+    }
     return false; // Players can pass through
   }
 
   collideWithSoul(soul) {
-    soul.frighten(this); // scares souls
+    if (!this.isDispelled) {
+      soul.frighten(this); // only frighten when not dispelled
+    }
     return false; // not solid to souls
   }
 
   draw(ctx) {
+    // Update dispel effect
+    if (this.isDispelled) {
+      this.dispelTimer += 16; // Approximate for one frame
+      if (this.dispelTimer >= this.dispelDuration) {
+        this.isDispelled = false;
+        this.opacity = 1;
+        // Reset particles
+        this.particles.forEach(particle => {
+          particle.x = Math.random() * this.width;
+          particle.y = Math.random() * this.height;
+          particle.dispersionSpeed = 0;
+        });
+      } else {
+        this.opacity = (this.dispelTimer / this.dispelDuration);
+      }
+    }
+
     // Override parent draw method completely
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = `rgba(26, 15, 46, ${this.opacity * 0.7})`;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 
     // Create dark fog effect
@@ -53,8 +89,14 @@ export default class DarknessWall extends Wall {
     
     this.particles.forEach(particle => {
       // Update particle position
-      particle.x += Math.cos(particle.angle) * particle.speed;
-      particle.y += Math.sin(particle.angle) * particle.speed;
+      if (this.isDispelled) {
+        // Disperse particles outward
+        particle.x += Math.cos(particle.angle) * (particle.speed + particle.dispersionSpeed);
+        particle.y += Math.sin(particle.angle) * (particle.speed + particle.dispersionSpeed);
+      } else {
+        particle.x += Math.cos(particle.angle) * particle.speed;
+        particle.y += Math.sin(particle.angle) * particle.speed;
+      }
       
       // Wrap particles around
       if (particle.x < 0) particle.x = this.width;
