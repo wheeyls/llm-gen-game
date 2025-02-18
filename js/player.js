@@ -27,7 +27,7 @@ export default class Player extends Sprite {
     const startY = height - slotSize - padding;
 
     // Draw inventory slots
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 1; i++) {
       const x = startX + (slotSize + padding) * i;
       ctx.fillStyle = '#ddd';
       ctx.fillRect(x, startY, slotSize, slotSize);
