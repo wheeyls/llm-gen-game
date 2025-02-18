@@ -94,13 +94,13 @@ export default class World {
         bottom: spawnBounds.bottom + this.cellSize,
       };
       const isClear = !this.souls.find(soul => this.intersects(soul.getBounds(), expandedBounds));
-      debugger;
 
       if (isClear) {
         const soul = new BigSoul(
           wall.x + wall.width * 1.1 + (Math.random() - 0.5) * 10,
           wall.y + (Math.random() - 0.5) * 10,
-          this.cellSize
+          this.cellSize,
+          this
         );
 
         this.souls.push(soul);

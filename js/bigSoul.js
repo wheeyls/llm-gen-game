@@ -19,12 +19,13 @@ export default class BigSoul extends Soul {
     this.pathFinder = new PathFinder(world);
     this.currentPath = null;
     this.pathIndex = 0;
+    this.pathUpdateTimer = 0;
+    this.pathUpdateInterval = 1000; // Recalculate path every second
   }
 
   flock(souls, target) {
     const separation = this.getSeparation(souls);
-    let selectedTarget = target;
-
+    
     if (this.confused) {
       // Only shake for the first second of confusion
       if (this.confusionTimer < 1000) {
@@ -40,57 +41,46 @@ export default class BigSoul extends Soul {
       return;
     }
 
-    // Apply separation
-    this.velocity.x += separation.x * 2.0;
-    this.velocity.y += separation.y * 2.0;
+    // Update path periodically or if we don't have one
+    this.pathUpdateTimer += 16; // Approximate for one frame
+    if (!this.currentPath || this.pathUpdateTimer >= this.pathUpdateInterval) {
+      this.currentPath = this.pathFinder.findPath(
+        this.x, this.y,
+        target.x, target.y
+      );
+      this.pathIndex = 0;
+      this.pathUpdateTimer = 0;
+    }
 
-    const dx = target.x - this.x;
-    const dy = target.y - this.y;
+    // If we have a path, follow it
+    if (this.currentPath && this.pathIndex < this.currentPath.length) {
+      const nextPoint = this.currentPath[this.pathIndex];
+      const dx = nextPoint.x - this.x;
+      const dy = nextPoint.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Determine target rotation based on movement direction
-    if (this.pathMode === 'horizontal') {
-      if (Math.abs(dx) > 5) {
-        this.targetRotation = dx > 0 ? 0 : Math.PI;
+      // Move to next point if we're close enough to current target
+      if (distance < this.width/2) {
+        this.pathIndex++;
       } else {
-        this.pathMode = 'vertical';
-      }
-    } else {
-      if (Math.abs(dy) > 5) {
-        this.targetRotation = dy > 0 ? Math.PI/2 : -Math.PI/2;
-      } else {
-        this.pathMode = 'horizontal';
+        // Set rotation based on movement direction
+        this.targetRotation = Math.atan2(dy, dx);
+        
+        // Rotate towards target rotation
+        const rotationDiff = ((this.targetRotation - this.rotation + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        this.rotation += rotationDiff * this.rotationSpeed;
+
+        // Move towards next point
+        this.velocity.x = (dx / distance) * this.maxSpeed;
+        this.velocity.y = (dy / distance) * this.maxSpeed;
       }
     }
 
-    // Rotate towards target rotation
-    const rotationDiff = ((this.targetRotation - this.rotation + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-    if (Math.abs(rotationDiff) > 0.1) {
-      this.isRotating = true;
-      this.movementTimer = this.movementDelay;
-      this.rotation += rotationDiff * this.rotationSpeed;
-      this.velocity.x *= 0.8;
-      this.velocity.y *= 0.8;
-    } else {
-      if (this.isRotating) {
-        this.movementTimer -= 16; // Approximate for one frame
-        if (this.movementTimer <= 0) {
-          this.isRotating = false;
-        }
-      }
+    // Apply separation from other souls
+    this.velocity.x += separation.x;
+    this.velocity.y += separation.y;
 
-      if (!this.isRotating) {
-        // Move in current direction
-        if (this.pathMode === 'horizontal') {
-          this.velocity.x += Math.cos(this.rotation) * 0.1;
-          this.velocity.y *= 0.8;
-        } else {
-          this.velocity.y += Math.sin(this.rotation) * 0.1;
-          this.velocity.x *= 0.8;
-        }
-      }
-    }
-
-    // Apply standard velocity limiting
+    // Limit speed
     const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
     if (speed > this.maxSpeed) {
       this.velocity.x = (this.velocity.x / speed) * this.maxSpeed;
