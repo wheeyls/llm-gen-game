@@ -6,28 +6,40 @@ export default class PathFinder {
 
   // Convert world coordinates to grid coordinates
   toGridCoord(x, y) {
+    const offsetX = (this.world.width - 10 * this.gridSize) / 2;
+    const offsetY = (this.world.height - 10 * this.gridSize) / 2;
     return {
-      x: Math.floor(x / this.gridSize),
-      y: Math.floor(y / this.gridSize)
+      x: Math.floor((x - offsetX) / this.gridSize),
+      y: Math.floor((y - offsetY) / this.gridSize)
     };
   }
 
   // Convert grid coordinates to world coordinates (center of cell)
   toWorldCoord(gridX, gridY) {
+    const offsetX = (this.world.width - 10 * this.gridSize) / 2;
+    const offsetY = (this.world.height - 10 * this.gridSize) / 2;
     return {
-      x: (gridX + 0.5) * this.gridSize,
-      y: (gridY + 0.5) * this.gridSize
+      x: offsetX + (gridX + 0.5) * this.gridSize,
+      y: offsetY + (gridY + 0.5) * this.gridSize
     };
   }
 
   // Check if a grid position is walkable
   isWalkable(gridX, gridY) {
+    // Check grid bounds
+    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+      return false;
+    }
+
+    const offsetX = (this.world.width - 10 * this.gridSize) / 2;
+    const offsetY = (this.world.height - 10 * this.gridSize) / 2;
+
     // Create a test bounds in world coordinates
     const bounds = {
-      left: gridX * this.gridSize,
-      right: (gridX + 1) * this.gridSize,
-      top: gridY * this.gridSize,
-      bottom: (gridY + 1) * this.gridSize
+      left: offsetX + gridX * this.gridSize,
+      right: offsetX + (gridX + 1) * this.gridSize,
+      top: offsetY + gridY * this.gridSize,
+      bottom: offsetY + (gridY + 1) * this.gridSize
     };
 
     // Check for wall collisions
