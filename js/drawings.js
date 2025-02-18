@@ -134,57 +134,87 @@ export const DayOfTheDeadDrawings = {
   },
 
   soulBride(ctx, size) {
-    // Base skull
-    this.sugarSkull(ctx, size);
+    // Profile skull shape
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size/2, size/1.8, 0, 0, Math.PI * 2);
+    ctx.fill();
     
-    // Add veil
+    // Profile jaw
+    ctx.beginPath();
+    ctx.moveTo(size/4, 0);
+    ctx.quadraticCurveTo(size/3, size/3, 0, size/3);
+    ctx.stroke();
+    
+    // Eye socket (profile)
+    ctx.strokeStyle = this.colors.purple;
+    ctx.lineWidth = size/30;
+    ctx.beginPath();
+    ctx.ellipse(size/4, -size/6, size/6, size/4, -Math.PI/6, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Decorative forehead pattern
+    ctx.beginPath();
+    ctx.moveTo(size/4, -size/3);
+    ctx.quadraticCurveTo(0, -size/2, -size/4, -size/3);
+    ctx.stroke();
+    
+    // Veil (profile)
     ctx.strokeStyle = '#FFFFFF';
     ctx.lineWidth = size/20;
     ctx.beginPath();
-    for(let i = 0; i < 5; i++) {
-      const waveHeight = size/8;
-      const startX = -size/2 + (i * size/4);
-      ctx.moveTo(startX, -size/3);
-      ctx.quadraticCurveTo(
-        startX + size/8, -size/3 - waveHeight,
-        startX + size/4, -size/3
-      );
-    }
+    ctx.moveTo(-size/3, -size/2);
+    ctx.quadraticCurveTo(0, -size/2, size/3, -size/3);
+    ctx.quadraticCurveTo(size/2, -size/4, size/2, 0);
     ctx.stroke();
     
-    // Add flower crown
-    for(let i = 0; i < 5; i++) {
+    // Marigold crown (profile)
+    for(let i = 0; i < 3; i++) {
       ctx.save();
-      ctx.translate(-size/2 + (i * size/4), -size/2);
-      ctx.scale(0.3, 0.3);
+      ctx.translate(-size/3 + (i * size/3), -size/2);
+      ctx.scale(0.2, 0.2);
       this.marigold(ctx, size, this.colors.orange);
       ctx.restore();
     }
   },
 
   soulAbuela(ctx, size) {
-    // Base skull
-    this.sugarSkull(ctx, size);
+    // Profile skull shape
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size/2, size/1.8, 0, 0, Math.PI * 2);
+    ctx.fill();
     
-    // Add glasses
+    // Profile jaw
+    ctx.beginPath();
+    ctx.moveTo(size/4, 0);
+    ctx.quadraticCurveTo(size/3, size/3, 0, size/3);
+    ctx.stroke();
+    
+    // Eye socket (profile)
+    ctx.strokeStyle = this.colors.purple;
+    ctx.lineWidth = size/30;
+    ctx.beginPath();
+    ctx.ellipse(size/4, -size/6, size/6, size/4, -Math.PI/6, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Glasses (profile)
     ctx.strokeStyle = '#666666';
     ctx.lineWidth = size/30;
     ctx.beginPath();
-    // Left lens
-    ctx.arc(-size/4, -size/8, size/6, 0, Math.PI * 2);
-    // Right lens
-    ctx.arc(size/4, -size/8, size/6, 0, Math.PI * 2);
-    // Bridge
-    ctx.moveTo(-size/12, -size/8);
-    ctx.lineTo(size/12, -size/8);
+    // Single lens
+    ctx.ellipse(size/4, -size/8, size/6, size/5, -Math.PI/6, 0, Math.PI * 2);
+    // Temple piece
+    ctx.moveTo(size/2, -size/8);
+    ctx.lineTo(size/2 + size/4, -size/10);
     ctx.stroke();
     
-    // Add shawl
+    // Shawl (profile)
     ctx.fillStyle = this.colors.purple;
     ctx.beginPath();
-    ctx.moveTo(-size/2, 0);
-    ctx.quadraticCurveTo(0, size/2, size/2, 0);
-    ctx.quadraticCurveTo(0, size/4, -size/2, 0);
+    ctx.moveTo(-size/3, 0);
+    ctx.quadraticCurveTo(size/4, size/2, size/2, 0);
+    ctx.quadraticCurveTo(size/4, size/4, -size/3, 0);
     ctx.fill();
   },
 
