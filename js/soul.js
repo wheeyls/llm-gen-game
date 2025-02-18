@@ -5,21 +5,28 @@ export default class Soul extends Sprite {
   constructor(x, y, width = 16, height = 16) {
     super(x, y, width, height, '#E4A853');
     this.velocity = { x: 0, y: 0 };
-    this.maxSpeed = 2;
+    this.maxSpeed = 4; // Increased max speed
+    this.acceleration = 0.15; // New acceleration factor
     this.trail = [];
-    this.maxTrailLength = 10;
+    this.maxTrailLength = 15; // Longer trail
     this.confused = false;
     this.confusionTimer = 0;
-    this.confusionDuration = 2000; // 2 seconds of confusion
+    this.confusionDuration = 3000; // 3 seconds of confusion
     this.wanderAngle = Math.random() * Math.PI * 2;
+    this.confusionIntensity = 1; // Track how confused the soul is
   }
 
   flock(souls, target) {
     if (this.confused) {
       // Wander randomly when confused
-      this.wanderAngle += (Math.random() - 0.5) * 0.5;
-      this.velocity.x += Math.cos(this.wanderAngle) * 0.1;
-      this.velocity.y += Math.sin(this.wanderAngle) * 0.1;
+      // More erratic movement when confused
+      this.wanderAngle += (Math.random() - 0.5) * this.confusionIntensity;
+      const confusionSpeed = 0.2 * this.confusionIntensity;
+      this.velocity.x += Math.cos(this.wanderAngle) * confusionSpeed;
+      this.velocity.y += Math.sin(this.wanderAngle) * confusionSpeed;
+      
+      // Gradually reduce confusion intensity
+      this.confusionIntensity = Math.max(1, this.confusionIntensity * 0.99);
     } else {
       const separation = this.getSeparation(souls);
       const cohesion = this.getCohesion(souls);
@@ -30,11 +37,21 @@ export default class Soul extends Sprite {
       this.velocity.y += separation.y * 0.5 + cohesion.y * 0.3 + alignment.y * 0.2 + seek.y * 0.8;
     }
 
-    const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+    // Apply acceleration to current velocity
+    const targetVelocity = {
+      x: this.velocity.x,
+      y: this.velocity.y
+    };
+    
+    const speed = Math.sqrt(targetVelocity.x * targetVelocity.x + targetVelocity.y * targetVelocity.y);
     if (speed > this.maxSpeed) {
-      this.velocity.x = (this.velocity.x / speed) * this.maxSpeed;
-      this.velocity.y = (this.velocity.y / speed) * this.maxSpeed;
+      targetVelocity.x = (targetVelocity.x / speed) * this.maxSpeed;
+      targetVelocity.y = (targetVelocity.y / speed) * this.maxSpeed;
     }
+    
+    // Smooth acceleration
+    this.velocity.x += (targetVelocity.x - this.velocity.x) * this.acceleration;
+    this.velocity.y += (targetVelocity.y - this.velocity.y) * this.acceleration;
   }
 
   update(deltaTime) {
@@ -236,10 +253,15 @@ export default class Soul extends Sprite {
       }
     }
 
-    // Enter confused state
+    // Enter confused state with high intensity
     this.confused = true;
     this.confusionTimer = 0;
-    this.wanderAngle = Math.atan2(this.velocity.y, this.velocity.x) + Math.PI;
+    this.confusionIntensity = 3.0; // Start with high confusion
+    // Bounce away from wall at higher speed
+    this.velocity.x *= -1.2;
+    this.velocity.y *= -1.2;
+    this.wanderAngle = Math.atan2(this.velocity.y, this.velocity.x) + 
+                       (Math.random() - 0.5) * Math.PI; // Random deviation
   }
 
   // Get bounds for collision detection
