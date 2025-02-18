@@ -1,11 +1,14 @@
 import Soul from './soul.js';
 import { DayOfTheDeadDrawings } from './drawings.js';
 
+const SOUL_TYPES = ['groom', 'bride', 'abuela'];
+
 export default class BigSoul extends Soul {
   constructor(x, y, cellSize) {
     super(x, y, cellSize, cellSize); // Size based on cell size
     this.maxSpeed = 1.0; // Slower movement
     this.acceleration = 0.03; // More gradual acceleration
+    this.soulType = SOUL_TYPES[Math.floor(Math.random() * SOUL_TYPES.length)];
     this.confusionDuration = 5000; // Longer confusion
     this.rotation = 0; // For spinning during confusion
     this.shakeAmount = 0; // For confusion shake effect
@@ -75,18 +78,19 @@ export default class BigSoul extends Soul {
       ctx.translate(this.x + this.width/2, this.y + this.height/2);
     }
 
-    // Draw large sugar skull body
+    // Draw the specific soul type
     ctx.scale(2, 2);
-    DayOfTheDeadDrawings.sugarSkull(ctx, this.width/4);
-    
-    // Add decorative elements
-    const decorSize = this.width/6;
-    [-1, 1].forEach(offset => {
-      ctx.save();
-      ctx.translate(offset * this.width/3, this.height/4);
-      DayOfTheDeadDrawings.marigold(ctx, decorSize, DayOfTheDeadDrawings.colors.orange);
-      ctx.restore();
-    });
+    switch(this.soulType) {
+      case 'groom':
+        DayOfTheDeadDrawings.soulGroom(ctx, this.width/4);
+        break;
+      case 'bride':
+        DayOfTheDeadDrawings.soulBride(ctx, this.width/4);
+        break;
+      case 'abuela':
+        DayOfTheDeadDrawings.soulAbuela(ctx, this.width/4);
+        break;
+    }
 
     ctx.restore();
   }
