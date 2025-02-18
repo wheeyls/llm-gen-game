@@ -6,7 +6,7 @@ const SOUL_TYPES = ['groom', 'bride', 'abuela'];
 
 export default class BigSoul extends Soul {
   constructor(x, y, cellSize, world) {
-    super(x, y, cellSize, cellSize);
+    super(x, y, cellSize * 0.8, cellSize * 0.8); // Make sprite slightly smaller than cell
     this.maxSpeed = 1.0;
     this.acceleration = 0.03;
     this.soulType = SOUL_TYPES[Math.floor(Math.random() * SOUL_TYPES.length)];
@@ -85,8 +85,9 @@ export default class BigSoul extends Soul {
 
     // Handle grid-based movement
     if (this.isMoving) {
-      const targetX = (this.targetGridX + 0.5) * this.gridSize;
-      const targetY = (this.targetGridY + 0.5) * this.gridSize;
+      // Calculate target position accounting for sprite dimensions
+      const targetX = this.targetGridX * this.gridSize + (this.gridSize - this.width) / 2;
+      const targetY = this.targetGridY * this.gridSize + (this.gridSize - this.height) / 2;
       
       const dx = targetX - this.x;
       const dy = targetY - this.y;
