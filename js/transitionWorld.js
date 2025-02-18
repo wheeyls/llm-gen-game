@@ -12,27 +12,27 @@ export default class TransitionWorld {
     this.backgroundColor = '#FDF6E3'; // Wes Anderson warm background
     this.parallax = new ParallaxTransition(width, height);
 
-    this.currentDialog = new Dialog('Welcome to the transition sequence.', [
-      { text: 'I seek power', nextDialog: 'power' },
-      { text: 'I seek wisdom', nextDialog: 'wisdom' },
-      { text: "Let's just explore", nextDialog: 'explore' },
+    this.currentDialog = new Dialog('¡Bienvenido al mundo de los espíritus!', [
+      { text: 'Quiero guiar a las almas', nextDialog: 'guide' },
+      { text: 'Busco el camino a la ofrenda', nextDialog: 'ofrenda' },
+      { text: 'Necesito encontrar velas', nextDialog: 'candles' },
     ]);
 
     this.dialogs = {
-      power: new Dialog('The path of power is dangerous...', [
-        { text: 'I understand the risks', nextDialog: 'complete' },
-        { text: 'Perhaps another path', nextDialog: null },
+      guide: new Dialog('Las almas perdidas necesitan tu ayuda...', [
+        { text: 'Seré su guía', nextDialog: 'complete' },
+        { text: 'Quizás otro camino', nextDialog: null },
       ]),
-      wisdom: new Dialog('The wise choice is not always clear...', [
-        { text: 'I will learn', nextDialog: 'complete' },
-        { text: 'Perhaps another path', nextDialog: null },
+      ofrenda: new Dialog('La ofrenda es donde las almas encontrarán paz...', [
+        { text: 'Las llevaré allí', nextDialog: 'complete' },
+        { text: 'Quizás otro camino', nextDialog: null },
       ]),
-      explore: new Dialog('The world awaits...', [
-        { text: "Let's begin", nextDialog: 'complete' },
-        { text: 'Perhaps another path', nextDialog: null },
+      candles: new Dialog('Las velas alejan la oscuridad y calman a las almas...', [
+        { text: 'Entiendo su importancia', nextDialog: 'complete' },
+        { text: 'Quizás otro camino', nextDialog: null },
       ]),
-      complete: new Dialog('Your journey begins...', [
-        { text: 'Enter the world', nextDialog: 'finish' },
+      complete: new Dialog('Tu misión es clara: guía las almas a la ofrenda, usa las velas para protegerlas de la oscuridad...', [
+        { text: 'Comenzar mi misión', nextDialog: 'finish' },
       ]),
     };
   }
