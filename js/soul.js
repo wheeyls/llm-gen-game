@@ -7,8 +7,6 @@ export default class Soul extends Sprite {
     this.velocity = { x: 0, y: 0 };
     this.maxSpeed = 4; // Increased max speed
     this.acceleration = 0.15; // New acceleration factor
-    this.trail = [];
-    this.maxTrailLength = 15; // Longer trail
     this.confused = false;
     this.confusionTimer = 0;
     this.confusionDuration = 3000; // 3 seconds of confusion
@@ -65,30 +63,17 @@ export default class Soul extends Sprite {
 
     this.x += this.velocity.x;
     this.y += this.velocity.y;
-
-    this.trail.unshift({ x: this.x, y: this.y });
-    if (this.trail.length > this.maxTrailLength) {
-      this.trail.pop();
-    }
   }
 
   draw(ctx) {
-    // Draw trail
-    ctx.beginPath();
-    ctx.moveTo(this.trail[0]?.x || this.x, this.trail[0]?.y || this.y);
-    for (let i = 1; i < this.trail.length; i++) {
-      ctx.lineTo(this.trail[i].x, this.trail[i].y);
-    }
-    ctx.strokeStyle = '#E4A85380';
-    ctx.lineWidth = 2;
-    ctx.stroke();
 
     // Draw soul glow
     const gradient = ctx.createRadialGradient(
       this.x + this.width/2, this.y + this.height/2, 0,
       this.x + this.width/2, this.y + this.height/2, this.width
     );
-    gradient.addColorStop(0, 'rgba(228, 168, 83, 0.6)');
+    gradient.addColorStop(0, 'rgba(228, 168, 83, 0.8)');
+    gradient.addColorStop(0.6, 'rgba(228, 168, 83, 0.3)');
     gradient.addColorStop(1, 'rgba(228, 168, 83, 0)');
 
     ctx.fillStyle = gradient;
