@@ -88,10 +88,10 @@ export default class TransitionWorld {
               this.onComplete();
             } else if (result.nextDialog === null) {
               // Go back to first dialog
-              this.currentDialog = new Dialog('Welcome to the transition sequence.', [
-                { text: 'I seek power', nextDialog: 'power' },
-                { text: 'I seek wisdom', nextDialog: 'wisdom' },
-                { text: "Let's just explore", nextDialog: 'explore' },
+              this.currentDialog = new Dialog('¡Bienvenido al mundo de los espíritus!', [
+                { text: 'Quiero guiar a las almas', nextDialog: 'guide' },
+                { text: 'Busco el camino a la ofrenda', nextDialog: 'ofrenda' },
+                { text: 'Necesito encontrar velas', nextDialog: 'candles' },
               ]);
             } else {
               this.currentDialog = this.dialogs[result.nextDialog];
