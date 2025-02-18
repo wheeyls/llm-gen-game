@@ -27,6 +27,7 @@ export default class BigSoul extends Soul {
     this.currentGridY = Math.floor(y / cellSize);
     this.targetGridX = this.currentGridX;
     this.targetGridY = this.currentGridY;
+    this.souls = world.souls; // Reference to all souls for collision checking
   }
 
   flock(souls, target) {
@@ -70,14 +71,37 @@ export default class BigSoul extends Soul {
       this.targetGridX = Math.floor(nextPoint.x / this.gridSize);
       this.targetGridY = Math.floor(nextPoint.y / this.gridSize);
       
-      // Only start moving if we're not already at the target
-      if (this.targetGridX !== this.currentGridX || this.targetGridY !== this.currentGridY) {
+      // Check if another soul is already moving to or occupying our target position
+      const isBlocked = this.souls.some(other => {
+        if (other === this) return false;
+        
+        // Check if other soul is moving to our target
+        if (other.isMoving && 
+            other.targetGridX === this.targetGridX && 
+            other.targetGridY === this.targetGridY) {
+          return true;
+        }
+        
+        // Check if other soul is already at our target
+        if (other.currentGridX === this.targetGridX && 
+            other.currentGridY === this.targetGridY) {
+          return true;
+        }
+        
+        return false;
+      });
+
+      // Only start moving if the path is clear
+      if (!isBlocked && (this.targetGridX !== this.currentGridX || this.targetGridY !== this.currentGridY)) {
         this.isMoving = true;
         
         // Set rotation based on movement direction
         const dx = this.targetGridX - this.currentGridX;
         const dy = this.targetGridY - this.currentGridY;
         this.targetRotation = Math.atan2(dy, dx);
+      } else if (isBlocked) {
+        // If blocked, try to find a new path
+        this.pathUpdateTimer = this.pathUpdateInterval;
       } else {
         this.pathIndex++;
       }
