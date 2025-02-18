@@ -32,7 +32,7 @@ export default class BigSoul extends Soul {
   flock(souls, target) {
     const separation = this.getSeparation(souls);
     
-    if (this.confused) {
+    if (false && this.confused) {
       // Only shake for the first second of confusion
       if (this.confusionTimer < 1000) {
         this.shakeAmount = Math.sin(Date.now() / 30) * this.confusionIntensity * 2;
