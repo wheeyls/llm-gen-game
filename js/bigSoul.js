@@ -20,7 +20,13 @@ export default class BigSoul extends Soul {
     this.currentPath = null;
     this.pathIndex = 0;
     this.pathUpdateTimer = 0;
-    this.pathUpdateInterval = 1000; // Recalculate path every second
+    this.pathUpdateInterval = 1000;
+    this.gridSize = cellSize;
+    this.isMoving = false;
+    this.currentGridX = Math.floor(x / cellSize);
+    this.currentGridY = Math.floor(y / cellSize);
+    this.targetGridX = this.currentGridX;
+    this.targetGridY = this.currentGridY;
   }
 
   flock(souls, target) {
@@ -58,25 +64,50 @@ export default class BigSoul extends Soul {
       this.pathUpdateTimer = 0;
     }
 
-    // If we have a path, follow it
-    if (this.currentPath && this.pathIndex < this.currentPath.length) {
+    // If we have a path, follow it grid by grid
+    if (this.currentPath && this.pathIndex < this.currentPath.length && !this.isMoving) {
       const nextPoint = this.currentPath[this.pathIndex];
-      const dx = nextPoint.x - this.x;
-      const dy = nextPoint.y - this.y;
+      this.targetGridX = Math.floor(nextPoint.x / this.gridSize);
+      this.targetGridY = Math.floor(nextPoint.y / this.gridSize);
+      
+      // Only start moving if we're not already at the target
+      if (this.targetGridX !== this.currentGridX || this.targetGridY !== this.currentGridY) {
+        this.isMoving = true;
+        
+        // Set rotation based on movement direction
+        const dx = this.targetGridX - this.currentGridX;
+        const dy = this.targetGridY - this.currentGridY;
+        this.targetRotation = Math.atan2(dy, dx);
+      } else {
+        this.pathIndex++;
+      }
+    }
+
+    // Handle grid-based movement
+    if (this.isMoving) {
+      const targetX = (this.targetGridX + 0.5) * this.gridSize;
+      const targetY = (this.targetGridY + 0.5) * this.gridSize;
+      
+      const dx = targetX - this.x;
+      const dy = targetY - this.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      // Move to next point if we're close enough to current target
-      if (distance < this.width/2) {
+      // Rotate towards target rotation
+      const rotationDiff = ((this.targetRotation - this.rotation + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      this.rotation += rotationDiff * this.rotationSpeed;
+
+      if (distance < 1) {
+        // Snap to grid when very close
+        this.x = targetX;
+        this.y = targetY;
+        this.currentGridX = this.targetGridX;
+        this.currentGridY = this.targetGridY;
+        this.isMoving = false;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
         this.pathIndex++;
       } else {
-        // Set rotation based on movement direction
-        this.targetRotation = Math.atan2(dy, dx);
-        
-        // Rotate towards target rotation
-        const rotationDiff = ((this.targetRotation - this.rotation + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-        this.rotation += rotationDiff * this.rotationSpeed;
-
-        // Move towards next point
+        // Move towards target grid position
         this.velocity.x = (dx / distance) * this.maxSpeed;
         this.velocity.y = (dy / distance) * this.maxSpeed;
       }
