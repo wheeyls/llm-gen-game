@@ -1,6 +1,7 @@
 import Sprite from './sprite.js';
 import Item from './item.js';
 import BigSoul from './bigSoul.js';
+import Player from './player.js';
 import ItemPrompt from './prompts/itemPrompt.js';
 import ExitPrompt from './prompts/exitPrompt.js';
 import GameState from './gameState.js';
@@ -11,7 +12,7 @@ export default class World {
     this.game = game;
     this.width = width;
     this.height = height;
-    this.player = new Sprite(width / 2, height / 2, 32, 32, '#E4A853'); // Warm golden soul color
+    this.player = new Player(width / 2, height / 2, 32, 32, '#E4A853'); // Warm golden soul color
     this.walls = [];
     this.items = [];
     this.soulCount = 5;
@@ -94,12 +95,7 @@ export default class World {
       const isClear = !this.souls.find(soul => this.intersects(soul.getBounds(), expandedBounds));
 
       if (isClear) {
-        const soul = new BigSoul(
-          wall.x + wall.width,
-          wall.y,
-          this.cellSize,
-          this
-        );
+        const soul = new BigSoul(wall.x + wall.width, wall.y, this.cellSize, this);
 
         this.souls.push(soul);
       }
@@ -113,44 +109,16 @@ export default class World {
   resolveCollisions(sprite) {
     const collisions = this.checkCollisions(sprite);
 
-    for (const wall of collisions) {
-      if (sprite === this.player) {
-        if (wall.collideWithPlayer(sprite)) {
-          const spriteBox = sprite.getBounds();
-          const wallBox = wall.getBounds();
-
-          // Calculate overlap on each axis
-          const overlapX = Math.min(spriteBox.right - wallBox.left, wallBox.right - spriteBox.left);
-          const overlapY = Math.min(spriteBox.bottom - wallBox.top, wallBox.bottom - spriteBox.top);
-
-          // Push out in direction of smallest overlap
-          if (overlapX < overlapY) {
-            // Push horizontally
-            if (spriteBox.left < wallBox.left) {
-              sprite.x = wallBox.left - sprite.width;
-            } else {
-              sprite.x = wallBox.right;
-            }
-          } else {
-            // Push vertically
-            if (spriteBox.top < wallBox.top) {
-              sprite.y = wallBox.top - sprite.height;
-            } else {
-              sprite.y = wallBox.bottom;
-            }
-          }
-        }
-      }
-    }
+    collisions.forEach(wall => wall.collide(sprite));
   }
 
   update(deltaTime) {
     this.handleInput(this.game.input);
-    this.spawnSoulsAtPortals();
+
     switch (this.state.current) {
       case GameState.EXPLORING:
         // Check for item collision
-        this.checkItemCollision();
+        this.spawnSoulsAtPortals();
 
         // Update souls
         if (this.flockTarget) {
@@ -159,20 +127,6 @@ export default class World {
             const soul = this.souls[i];
             soul.flock(this.souls, this.flockTarget);
             soul.update(deltaTime);
-
-            // Check wall collisions
-            for (const wall of this.walls) {
-              if (soul.intersects(wall)) {
-                if (wall.type === 'ofrenda') {
-                  // Soul has reached the ofrenda - remove it
-                  this.souls.splice(i, 1);
-                  break;
-                } else {
-                  // Bounce off other walls
-                  soul.bounce(wall);
-                }
-              }
-            }
           }
         }
 
@@ -187,6 +141,8 @@ export default class World {
 
     // Resolve any collisions that occurred during movement
     this.resolveCollisions(this.player);
+    this.checkItemCollision();
+    this.checkSoulCollisions();
 
     // Check for screen transitions (only through gaps in walls)
     if (this.player.x < 0 && this.gridX > 0) {
@@ -209,6 +165,18 @@ export default class World {
       this.player.y = 0;
       this.loadCurrentRoom();
     }
+  }
+
+  checkSoulCollisions() {
+    this.souls.forEach((soul, i) => {
+      const collisions = this.checkCollisions(soul);
+
+      collisions.forEach((wall, i) => {
+        if (wall.collide(soul) === 'remove') {
+          this.souls.splice(i, 1);
+        }
+      });
+    });
   }
 
   draw(ctx) {
