@@ -2,10 +2,10 @@ import Soul from './soul.js';
 import { DayOfTheDeadDrawings } from './drawings.js';
 
 export default class BigSoul extends Soul {
-  constructor(x, y) {
-    super(x, y, 64, 64); // Much bigger than regular souls
-    this.maxSpeed = 1.5; // Slower movement
-    this.acceleration = 0.05; // More gradual acceleration
+  constructor(x, y, cellSize) {
+    super(x, y, cellSize, cellSize); // Size based on cell size
+    this.maxSpeed = 1.0; // Slower movement
+    this.acceleration = 0.03; // More gradual acceleration
     this.confusionDuration = 5000; // Longer confusion
     this.rotation = 0; // For spinning during confusion
     this.shakeAmount = 0; // For confusion shake effect
@@ -13,16 +13,23 @@ export default class BigSoul extends Soul {
   }
 
   flock(souls, target) {
+    // Strong separation to prevent collisions
+    const separation = this.getSeparation(souls);
+    
     if (this.confused) {
       // Confused behavior: shake, spin, and wander
       this.rotation += this.confusionIntensity * 0.1;
-      this.shakeAmount = Math.sin(Date.now() / 50) * this.confusionIntensity * 5;
+      this.shakeAmount = Math.sin(Date.now() / 50) * this.confusionIntensity * 3;
       
       // Slow wandering away from target
       const angleFromTarget = Math.atan2(this.y - target.y, this.x - target.x);
-      this.velocity.x = Math.cos(angleFromTarget) * 0.5;
-      this.velocity.y = Math.sin(angleFromTarget) * 0.5;
+      this.velocity.x = Math.cos(angleFromTarget) * 0.3;
+      this.velocity.y = Math.sin(angleFromTarget) * 0.3;
     } else {
+      // Apply separation before movement
+      this.velocity.x += separation.x * 2.0;
+      this.velocity.y += separation.y * 2.0;
+      
       // L-shaped path following
       const dx = target.x - this.x;
       const dy = target.y - this.y;
