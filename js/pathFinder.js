@@ -10,7 +10,7 @@ export default class PathFinder {
     const offsetY = (this.world.height - 10 * this.gridSize) / 2;
     return {
       x: Math.floor((x - offsetX) / this.gridSize),
-      y: Math.floor((y - offsetY) / this.gridSize)
+      y: Math.floor((y - offsetY) / this.gridSize),
     };
   }
 
@@ -26,7 +26,7 @@ export default class PathFinder {
     const offsetY = (this.world.height - 10 * this.gridSize) / 2;
     return {
       x: offsetX + (gridX + 0.5) * this.gridSize,
-      y: offsetY + (gridY + 0.5) * this.gridSize
+      y: offsetY + (gridY + 0.5) * this.gridSize,
     };
   }
 
@@ -34,7 +34,6 @@ export default class PathFinder {
   isWalkable(gridX, gridY) {
     // Check grid bounds
     if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
-      console.log('Position out of bounds:', { gridX, gridY });
       return false;
     }
 
@@ -46,27 +45,20 @@ export default class PathFinder {
       left: offsetX + gridX * this.gridSize,
       right: offsetX + (gridX + 1) * this.gridSize,
       top: offsetY + gridY * this.gridSize,
-      bottom: offsetY + (gridY + 1) * this.gridSize
+      bottom: offsetY + (gridY + 1) * this.gridSize,
     };
 
     // Check for wall collisions
-    const collision = this.walls.find(wall => 
-      this.world.intersects(wall.getBounds(), bounds)
-    );
+    const collision = this.walls.find(wall => this.world.intersects(wall.getBounds(), bounds));
 
     if (collision) {
-      console.log('Position not walkable due to wall:', {
-        gridPos: { x: gridX, y: gridY },
-        worldBounds: bounds,
-        wall: collision
-      });
       // Allow walking to ofrenda, but not through other walls
       if (collision.type === 'ofrenda') {
         const targetBounds = {
-          left: this.world.flockTarget.x - this.gridSize/2,
-          right: this.world.flockTarget.x + this.gridSize/2,
-          top: this.world.flockTarget.y - this.gridSize/2,
-          bottom: this.world.flockTarget.y + this.gridSize/2
+          left: this.world.flockTarget.x - this.gridSize / 2,
+          right: this.world.flockTarget.x + this.gridSize / 2,
+          top: this.world.flockTarget.y - this.gridSize / 2,
+          bottom: this.world.flockTarget.y + this.gridSize / 2,
         };
         return this.world.intersects(collision.getBounds(), targetBounds);
       }
@@ -80,16 +72,18 @@ export default class PathFinder {
   getNeighbors(node) {
     const neighbors = [];
     const directions = [
-      {x: 0, y: -1}, {x: 1, y: 0},
-      {x: 0, y: 1}, {x: -1, y: 0}
+      { x: 0, y: -1 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+      { x: -1, y: 0 },
     ];
 
     for (const dir of directions) {
       const newX = node.x + dir.x;
       const newY = node.y + dir.y;
-      
+
       if (this.isWalkable(newX, newY)) {
-        neighbors.push({x: newX, y: newY});
+        neighbors.push({ x: newX, y: newY });
       }
     }
 
@@ -105,41 +99,32 @@ export default class PathFinder {
   findPath(startX, startY, endX, endY) {
     const start = this.toGridCoord(startX, startY);
     const end = this.toGridCoord(endX, endY);
-    
-    console.log('PathFinding:', {
-      worldStart: { x: startX, y: startY },
-      worldEnd: { x: endX, y: endY },
-      gridStart: start,
-      gridEnd: end
-    });
 
     // Always allow end position if it's the ofrenda
-    const endWall = this.walls.find(wall => 
+    const endWall = this.walls.find(wall =>
       this.world.intersects(wall.getBounds(), {
-        left: endX - this.gridSize/2,
-        right: endX + this.gridSize/2,
-        top: endY - this.gridSize/2,
-        bottom: endY + this.gridSize/2
+        left: endX - this.gridSize / 2,
+        right: endX + this.gridSize / 2,
+        top: endY - this.gridSize / 2,
+        bottom: endY + this.gridSize / 2,
       })
     );
 
     if (!this.isWalkable(start.x, start.y)) {
-      console.log('Start position not walkable:', start);
       return null;
     }
-    
+
     // Allow pathfinding to ofrenda
     if (!this.isWalkable(end.x, end.y) && (!endWall || endWall.type !== 'ofrenda')) {
-      console.log('End position not walkable:', end);
       return null;
     }
-    
+
     const openSet = new Set([JSON.stringify(start)]);
     const cameFrom = new Map();
-    
+
     const gScore = new Map();
     gScore.set(JSON.stringify(start), 0);
-    
+
     const fScore = new Map();
     fScore.set(JSON.stringify(start), this.heuristic(start, end));
 
@@ -147,7 +132,7 @@ export default class PathFinder {
       // Find node with lowest fScore
       let current = null;
       let lowestFScore = Infinity;
-      
+
       for (const pos of openSet) {
         const score = fScore.get(pos);
         if (score < lowestFScore) {

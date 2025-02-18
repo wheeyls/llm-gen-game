@@ -1,5 +1,4 @@
 import Sprite from './sprite.js';
-import Wall from './wall.js';
 import Item from './item.js';
 import BigSoul from './bigSoul.js';
 import ItemPrompt from './prompts/itemPrompt.js';
@@ -13,7 +12,6 @@ export default class World {
     this.width = width;
     this.height = height;
     this.player = new Sprite(width / 2, height / 2, 32, 32, '#E4A853'); // Warm golden soul color
-    this.entities = [];
     this.walls = [];
     this.items = [];
     this.soulCount = 5;
@@ -229,9 +227,6 @@ export default class World {
     // Draw souls
     this.souls.forEach(soul => soul.draw(ctx));
 
-    // Draw all entities
-    this.entities.forEach(entity => entity.draw(ctx));
-
     // Draw items
     this.items.forEach(item => item.draw(ctx));
 
@@ -382,83 +377,6 @@ World.prototype.handleInput = function (input) {
         this.itemPrompt = null;
       }
       break;
-  }
-};
-
-World.prototype.scatterInitialItems = function () {
-  const itemTypes = ['Sword', 'Shield', 'Potion', 'Key', 'Gem'];
-  const itemsPerRoom = 3;
-
-  // For each room in the 3x3 grid
-  for (let gridY = 0; gridY < 3; gridY++) {
-    for (let gridX = 0; gridX < 3; gridX++) {
-      const roomLayout = this.rooms[gridY][gridX];
-      const offsetX = (this.width - 10 * this.cellSize) / 2;
-      const offsetY = (this.height - 10 * this.cellSize) / 2;
-
-      let attempts = 0;
-      const maxAttempts = 20;
-      let itemsPlaced = 0;
-      const roomItems = [];
-
-      // Try to place items in valid positions
-      while (itemsPlaced < itemsPerRoom && attempts < maxAttempts) {
-        const x = offsetX + (1 + Math.random() * 8) * this.cellSize;
-        const y = offsetY + (1 + Math.random() * 8) * this.cellSize;
-
-        // Create temporary walls to check against
-        const walls = [];
-        for (let y = 0; y < roomLayout.length; y++) {
-          for (let x = 0; x < roomLayout[y].length; x++) {
-            if (roomLayout[y][x] === '#') {
-              walls.push(
-                new Wall(
-                  offsetX + x * this.cellSize,
-                  offsetY + y * this.cellSize,
-                  this.cellSize,
-                  this.cellSize
-                )
-              );
-            }
-          }
-        }
-
-        // Create temporary item to check position
-        const tempItem = new Item(x, y, 'temp');
-
-        // Check if position is clear
-        if (!walls.some(wall => this.intersects(wall.getBounds(), tempItem.getBounds()))) {
-          const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-          const item = new Item(x, y, type);
-
-          // Add 2-3 random properties to each item
-          const allProperties = Object.values(ItemProperties);
-          const propertyCount = 2 + Math.floor(Math.random() * 2);
-          for (let i = 0; i < propertyCount; i++) {
-            const prop = allProperties[Math.floor(Math.random() * allProperties.length)];
-            item.addProperty(prop);
-          }
-
-          // Add satirical descriptions based on properties
-          if (item.hasProperty(ItemProperties.SUSPICIOUS)) {
-            item.description = 'Acquired through completely legitimate means*';
-            item.origin = '*Documentation pending';
-          } else if (item.hasProperty(ItemProperties.SACRED)) {
-            item.description = 'A purely decorative object (ignore the altar marks)';
-            item.origin = 'Found in an unlocked temple';
-          }
-
-          roomItems.push(item);
-          itemsPlaced++;
-        }
-
-        attempts++;
-      }
-
-      // Store items for this room
-      const roomKey = `${gridX},${gridY}`;
-      this.roomItems[roomKey] = roomItems;
-    }
   }
 };
 

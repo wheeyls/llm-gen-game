@@ -1,5 +1,3 @@
-import Wall from '../wall.js';
-
 export default class BaseGenerator {
   constructor(width, height) {
     this.width = width;
@@ -23,16 +21,15 @@ export default class BaseGenerator {
   }
 
   // Helper method to create wall objects with proper positioning
-  createWall(gridX, gridY, cellX, cellY, type = 'wall') {
+  createWall(gridX, gridY, cellX, cellY, wallKlass) {
     const offsetX = (this.width - 10 * this.cellSize) / 2;
     const offsetY = (this.height - 10 * this.cellSize) / 2;
-    
-    return new Wall(
+
+    return new wallKlass(
       offsetX + cellX * this.cellSize,
       offsetY + cellY * this.cellSize,
       this.cellSize,
-      this.cellSize,
-      type
+      this.cellSize
     );
   }
 }

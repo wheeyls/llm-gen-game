@@ -1,13 +1,13 @@
 import Wall from './wall.js';
 import { DayOfTheDeadDrawings } from '../drawings.js';
 
-export default class ConfusionWall extends Wall {
+export default class ForgottenWall extends Wall {
   get defaultColor() {
-    return '#7209b7'; // Disorienting memory areas
+    return '#8e6e95'; // Forgotten memory barriers
   }
 
   get type() {
-    return 'confusion';
+    return 'forgotten';
   }
 
   collideWithPlayer(player) {

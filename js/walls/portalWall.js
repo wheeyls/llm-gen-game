@@ -1,13 +1,13 @@
 import Wall from './wall.js';
 import { DayOfTheDeadDrawings } from '../drawings.js';
 
-export default class OfrendaWall extends Wall {
+export default class PortalWall extends Wall {
   get defaultColor() {
-    return DayOfTheDeadDrawings.colors.altarPink; // Destination altar
+    return '#4A0404'; // Deep red spirit portal
   }
 
   get type() {
-    return 'ofrenda';
+    return 'portal';
   }
 
   collideWithPlayer(player) {
@@ -15,10 +15,10 @@ export default class OfrendaWall extends Wall {
   }
 
   collideWithSoul(soul) {
-    return 'remove'; // Signal to remove the soul
+    return true;
   }
 
   drawImage(ctx) {
-    DayOfTheDeadDrawings.ofrenda(ctx, this.size);
+    DayOfTheDeadDrawings.portal(ctx, this.size);
   }
 }

@@ -1,4 +1,5 @@
 import BaseGenerator from './baseGenerator.js';
+import { manualMap } from '../walls/wallTypes.js';
 
 // Wall type symbols:
 // # - basic wall
@@ -47,19 +48,10 @@ export default class ManualGenerator extends BaseGenerator {
         const mapY = startY + i;
         const mapX = startX + j;
         const cell = this.fullMap[mapY]?.[mapX] || '#';
-        
+
         // Convert ASCII symbols to wall types
-        const wallType = {
-          '#': 'wall',
-          'D': 'darkness',
-          'F': 'forgotten',
-          'V': 'void',
-          'C': 'confusion',
-          'O': 'ofrenda',
-          'P': 'portal',
-          'E': 'exit'
-        }[cell];
-        
+        const wallType = manualMap[cell];
+
         if (wallType) {
           walls.push(this.createWall(x, y, j, i, wallType));
         }

@@ -1,13 +1,13 @@
 import Wall from './wall.js';
 import { DayOfTheDeadDrawings } from '../drawings.js';
 
-export default class ConfusionWall extends Wall {
+export default class DarknessWall extends Wall {
   get defaultColor() {
-    return '#7209b7'; // Disorienting memory areas
+    return '#1a0f2e'; // Dark areas needing candle light
   }
 
   get type() {
-    return 'confusion';
+    return 'darkness';
   }
 
   collideWithPlayer(player) {
@@ -20,6 +20,6 @@ export default class ConfusionWall extends Wall {
   }
 
   drawImage(ctx) {
-    DayOfTheDeadDrawings.papelPicado(ctx, this.size, DayOfTheDeadDrawings.colors.pink);
+    DayOfTheDeadDrawings.sugarSkull(ctx, this.size);
   }
 }

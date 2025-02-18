@@ -1,13 +1,13 @@
 import Wall from './wall.js';
 import { DayOfTheDeadDrawings } from '../drawings.js';
 
-export default class OfrendaWall extends Wall {
+export default class VoidWall extends Wall {
   get defaultColor() {
-    return DayOfTheDeadDrawings.colors.altarPink; // Destination altar
+    return '#d4a373'; // Gaps needing marigold bridges
   }
 
   get type() {
-    return 'ofrenda';
+    return 'void';
   }
 
   collideWithPlayer(player) {
@@ -15,10 +15,10 @@ export default class OfrendaWall extends Wall {
   }
 
   collideWithSoul(soul) {
-    return 'remove'; // Signal to remove the soul
+    return true; // Solid to players
   }
 
   drawImage(ctx) {
-    DayOfTheDeadDrawings.ofrenda(ctx, this.size);
+    DayOfTheDeadDrawings.marigold(ctx, this.size, DayOfTheDeadDrawings.colors.orange);
   }
 }
