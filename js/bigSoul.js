@@ -33,7 +33,7 @@ export default class BigSoul extends Soul {
   flock(souls, target) {
     const separation = this.getSeparation(souls);
     
-    if (false && this.confused) {
+    if (this.confused) {
       // Only shake for the first second of confusion
       if (this.confusionTimer < 1000) {
         this.shakeAmount = Math.sin(Date.now() / 30) * this.confusionIntensity * 2;
@@ -186,7 +186,36 @@ export default class BigSoul extends Soul {
     ctx.restore();
   }
 
-  frighten() {
+  frighten(source) {
+    if (!this.confused) {
+      // Calculate escape point - opposite direction from darkness
+      const dx = this.x - (source.x + source.width/2);
+      const dy = this.y - (source.y + source.height/2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // Find a point to escape to, about 3 cells away from current position
+      const escapeX = this.x + (dx / distance) * this.gridSize * 3;
+      const escapeY = this.y + (dy / distance) * this.gridSize * 3;
+      
+      // Use pathfinding to find escape route
+      this.currentPath = this.pathFinder.findPath(
+        this.x, this.y,
+        escapeX, escapeY
+      );
+      
+      // Reset path following
+      this.pathIndex = 0;
+      this.isMoving = false;
+      
+      // Enter confused state
+      this.confused = true;
+      this.confusionTimer = 0;
+      this.confusionIntensity = 3.0;
+      
+      // Clear velocity to start fresh
+      this.velocity.x = 0;
+      this.velocity.y = 0;
+    }
   }
 
   bounce(wall) {
