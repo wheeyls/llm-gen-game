@@ -8,19 +8,18 @@ import BaseGenerator from './baseGenerator.js';
 // C - confusion wall
 // O - ofrenda/altar wall
 // P - portal wall (spirit spawn point)
-// 1,2,3 - numbered doors
 // E - exit
 const DEBUG_MAP = `
-###############################
-#     1  ##     2  ##     3  E
-#   DDD  ##   FFF  ##   VVV  #
-#   D    ##   F    ##   V    #
-#####    ######    ######    #
-#        P                   #
-#   C    ##   O    ##        #
-#   C    ##   O    ##        #
-#   C    ##   O    ##        #
-##############################`;
+########################################
+#        ##    #   ##        E         #
+#        ##    #   ##        #         #
+#        ##    #   ##        #         #
+#        ##    #   ##        #         #
+P        C     D   F         V         O
+#        ##    #   ##        #         #
+#        ##    #   ##        #         #
+#        ##    #   ##        #         #
+########################################`;
 
 export default class ManualGenerator extends BaseGenerator {
   constructor(width, height, mapString = DEBUG_MAP) {
@@ -58,9 +57,6 @@ export default class ManualGenerator extends BaseGenerator {
           'C': 'confusion',
           'O': 'ofrenda',
           'P': 'portal',
-          '1': 'door1',
-          '2': 'door2',
-          '3': 'door3',
           'E': 'exit'
         }[cell];
         

@@ -54,7 +54,7 @@ export default class Soul extends Sprite {
     );
     gradient.addColorStop(0, 'rgba(228, 168, 83, 0.6)');
     gradient.addColorStop(1, 'rgba(228, 168, 83, 0)');
-    
+
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(
@@ -96,12 +96,12 @@ export default class Soul extends Sprite {
       y: target.y - this.y
     };
     const distance = Math.sqrt(desired.x * desired.x + desired.y * desired.y);
-    
+
     if (distance > 0) {
       desired.x = (desired.x / distance) * this.maxSpeed;
       desired.y = (desired.y / distance) * this.maxSpeed;
     }
-    
+
     return {
       x: desired.x - this.velocity.x,
       y: desired.y - this.velocity.y
@@ -115,9 +115,9 @@ export default class Soul extends Sprite {
 
     for (const other of souls) {
       if (other === this) continue;
-      
+
       const distance = Math.hypot(this.x - other.x, this.y - other.y);
-      
+
       if (distance > 0 && distance < desiredSeparation) {
         const diff = {
           x: (this.x - other.x) / distance,
@@ -144,9 +144,9 @@ export default class Soul extends Sprite {
 
     for (const other of souls) {
       if (other === this) continue;
-      
+
       const distance = Math.hypot(this.x - other.x, this.y - other.y);
-      
+
       if (distance > 0 && distance < neighborDist) {
         sum.x += other.x;
         sum.y += other.y;
@@ -169,9 +169,9 @@ export default class Soul extends Sprite {
 
     for (const other of souls) {
       if (other === this) continue;
-      
+
       const distance = Math.hypot(this.x - other.x, this.y - other.y);
-      
+
       if (distance > 0 && distance < neighborDist) {
         sum.x += other.velocity.x;
         sum.y += other.velocity.y;

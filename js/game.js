@@ -52,7 +52,7 @@ export default class Game {
   step(deltaTime) {
     // Update and render current world
     this.currentWorld.update(deltaTime);
-    this.input.update();
+    this.input.update(deltaTime);
     this.currentWorld.draw(this.ctx);
   }
 }

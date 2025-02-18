@@ -1,6 +1,7 @@
 import Sprite from './sprite.js';
 import Wall from './wall.js';
 import Item from './item.js';
+import Soul from './soul.js';
 import ItemPrompt from './prompts/itemPrompt.js';
 import ExitPrompt from './prompts/exitPrompt.js';
 import GameState from './gameState.js';
@@ -15,6 +16,8 @@ export default class World {
     this.entities = [];
     this.walls = [];
     this.items = [];
+    this.souls = [];
+    this.ofrendaPosition = null;
     this.inventory = new Array(5).fill(null);
     this.state = new GameState();
     this.itemPrompt = null;
@@ -51,8 +54,39 @@ export default class World {
     const roomKey = `${this.gridX},${this.gridY}`;
     this.items = this.roomItems[roomKey] || [];
 
+    // Find ofrenda and spawn souls
+    this.findOfrendaPosition();
+    this.spawnSoulsAtPortals();
+
     // Ensure player starts in a safe position in new room
     this.resolveCollisions(this.player);
+  }
+
+  findOfrendaPosition() {
+    // defaults to center of next room if not found
+    this.ofrendaPosition = { x: this.cellSize * 15, y: this.cellSize * 5 };
+
+    for (const wall of this.walls) {
+      if (wall.type === 'ofrenda') {
+        this.ofrendaPosition = {
+          x: wall.x + wall.width / 2,
+          y: wall.y + wall.height / 2
+        };
+        return;
+      }
+    }
+  }
+
+  spawnSoulsAtPortals() {
+    for (const wall of this.walls) {
+      if (wall.type === 'portal') {
+        const soul = new Soul(
+          wall.x + wall.width * 1.1,
+          wall.y
+        );
+        this.souls.push(soul);
+      }
+    }
   }
 
   checkCollisions(sprite) {
@@ -94,12 +128,32 @@ export default class World {
     }
   }
 
-  update() {
+  update(deltaTime) {
     this.handleInput(this.game.input);
     switch (this.state.current) {
       case GameState.EXPLORING:
         // Check for item collision
         this.checkItemCollision();
+
+        // Update souls
+        if (this.ofrendaPosition) {
+          this.souls.forEach(soul => {
+            soul.flock(this.souls, this.ofrendaPosition);
+            soul.update(deltaTime);
+
+            // Remove souls that reach the ofrenda
+            const distance = Math.hypot(
+              soul.x - this.ofrendaPosition.x,
+              soul.y - this.ofrendaPosition.y
+            );
+            if (distance < 20) {
+              const index = this.souls.indexOf(soul);
+              if (index > -1) {
+                this.souls.splice(index, 1);
+              }
+            }
+          });
+        }
 
         break;
 
@@ -143,6 +197,9 @@ export default class World {
 
     // Draw walls
     this.walls.forEach(wall => wall.draw(ctx));
+
+    // Draw souls
+    this.souls.forEach(soul => soul.draw(ctx));
 
     // Draw all entities
     this.entities.forEach(entity => entity.draw(ctx));
