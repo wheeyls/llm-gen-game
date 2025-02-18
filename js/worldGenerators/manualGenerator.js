@@ -11,14 +11,14 @@ import BaseGenerator from './baseGenerator.js';
 // E - exit
 const DEBUG_MAP = `
 ########################################
-#        ##    #   ##        E         #
-#        ##    #   ##        #         #
-#        ##    #   ##        #         #
-#        ##    #   ##        #         #
-P        C     D   F         V         O
-#        ##    #   ##        #         #
-#        ##    #   ##        #         #
-#        ##    #   ##        #         #
+#  #  #  ##    #   ##        E         #
+#  #  #  ##    #   ##        #         #
+#  #     ##    #   ##        #         #
+#  #  #  ##    #   ##        #         #
+P  #  #  C     D   F         V         O
+#  #  #  ##    #   ##        #         #
+#     #  ##    #   ##        #         #
+#  #  #  ##    #   ##        #         #
 ########################################`;
 
 export default class ManualGenerator extends BaseGenerator {

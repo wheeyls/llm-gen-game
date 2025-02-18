@@ -12,6 +12,7 @@ export default class BigSoul extends Soul {
     this.confusionDuration = 5000;
     this.rotation = 0;
     this.targetRotation = 0;
+    this.confusedTarget = null;
     this.rotationSpeed = 0.1;
     this.shakeAmount = 0;
     this.pathMode = 'horizontal';
@@ -22,15 +23,16 @@ export default class BigSoul extends Soul {
 
   flock(souls, target) {
     const separation = this.getSeparation(souls);
-    
+    let selectedTarget = target;
+
     if (this.confused) {
       // Only shake for the first second of confusion
       if (this.confusionTimer < 1000) {
-        this.shakeAmount = Math.sin(Date.now() / 30) * this.confusionIntensity * 4;
+        this.shakeAmount = Math.sin(Date.now() / 30) * this.confusionIntensity * 2;
       } else {
         this.shakeAmount = 0;
       }
-      
+
       // Wander away from target more deliberately
       const angleFromTarget = Math.atan2(this.y - target.y, this.x - target.x);
       this.velocity.x = Math.cos(angleFromTarget) * 0.5;
@@ -41,10 +43,10 @@ export default class BigSoul extends Soul {
     // Apply separation
     this.velocity.x += separation.x * 2.0;
     this.velocity.y += separation.y * 2.0;
-    
+
     const dx = target.x - this.x;
     const dy = target.y - this.y;
-    
+
     // Determine target rotation based on movement direction
     if (this.pathMode === 'horizontal') {
       if (Math.abs(dx) > 5) {
@@ -75,7 +77,7 @@ export default class BigSoul extends Soul {
           this.isRotating = false;
         }
       }
-      
+
       if (!this.isRotating) {
         // Move in current direction
         if (this.pathMode === 'horizontal') {
@@ -98,18 +100,18 @@ export default class BigSoul extends Soul {
 
   draw(ctx) {
     ctx.save();
-    
+
     // Apply confusion effects or normal rotation
     if (this.confused) {
       ctx.translate(
         this.x + this.width/2 + this.shakeAmount,
         this.y + this.height/2 + this.shakeAmount
       );
-      ctx.rotate(this.targetRotation); // Keep facing same direction while confused
+      //ctx.rotate(this.targetRotation); // Keep facing same direction while confused
     } else {
       ctx.translate(this.x + this.width/2, this.y + this.height/2);
-      ctx.rotate(this.rotation);
     }
+    ctx.rotate(this.rotation);
 
     // Draw the specific soul type
     ctx.scale(2, 2);
@@ -129,8 +131,12 @@ export default class BigSoul extends Soul {
   }
 
   bounce(wall) {
-    super.bounce(wall);
-    // Reset path mode when bouncing
-    this.pathMode = this.velocity.x === 0 ? 'horizontal' : 'vertical';
+    if (!this.confused) {
+      this.velocity.x = 0;
+      this.velocity.y = 0;
+      this.confused = true;
+      this.confusionIntensity = 3.0; // Start with high confusion
+      this.confusionTimer = 0;
+    }
   }
 }
