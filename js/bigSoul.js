@@ -6,7 +6,7 @@ const SOUL_TYPES = ['groom', 'bride', 'abuela'];
 
 export default class BigSoul extends Soul {
   constructor(x, y, cellSize, world) {
-    super(x, y, cellSize * 0.8, cellSize * 0.8); // Make sprite slightly smaller than cell
+    super(x, y, cellSize * 0.4, cellSize * 0.4); // Make souls much smaller
     this.maxSpeed = 1.0;
     this.acceleration = 0.03;
     this.soulType = SOUL_TYPES[Math.floor(Math.random() * SOUL_TYPES.length)];
@@ -151,33 +151,37 @@ export default class BigSoul extends Soul {
   }
 
   draw(ctx) {
+    // Draw soul glow
+    const gradient = ctx.createRadialGradient(
+      this.x + this.width/2, this.y + this.height/2, 0,
+      this.x + this.width/2, this.y + this.height/2, this.width
+    );
+    gradient.addColorStop(0, 'rgba(228, 168, 83, 0.8)');
+    gradient.addColorStop(0.6, 'rgba(228, 168, 83, 0.3)');
+    gradient.addColorStop(1, 'rgba(228, 168, 83, 0)');
+
     ctx.save();
-
-    // Apply confusion effects or normal rotation
-    if (this.confused) {
-      ctx.translate(
-        this.x + this.width/2 + this.shakeAmount,
-        this.y + this.height/2 + this.shakeAmount
-      );
-      //ctx.rotate(this.targetRotation); // Keep facing same direction while confused
-    } else {
-      ctx.translate(this.x + this.width/2, this.y + this.height/2);
-    }
+    ctx.translate(this.x + this.width/2, this.y + this.height/2);
     ctx.rotate(this.rotation);
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, this.width, 0, Math.PI * 2);
+    ctx.fill();
 
-    // Draw the specific soul type
-    ctx.scale(2, 2);
-    switch(this.soulType) {
-      case 'groom':
-        DayOfTheDeadDrawings.soulGroom(ctx, this.width/4);
-        break;
-      case 'bride':
-        DayOfTheDeadDrawings.soulBride(ctx, this.width/4);
-        break;
-      case 'abuela':
-        DayOfTheDeadDrawings.soulAbuela(ctx, this.width/4);
-        break;
-    }
+    // Draw soul core
+    ctx.fillStyle = '#E4A853';
+    ctx.beginPath();
+    ctx.arc(0, 0, this.width/2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Add decorative swirls
+    ctx.rotate(Date.now() / 1000);
+    DayOfTheDeadDrawings.papelPicado(
+      ctx,
+      this.width * 1.2,
+      'rgba(255, 255, 255, 0.3)'
+    );
 
     ctx.restore();
   }
