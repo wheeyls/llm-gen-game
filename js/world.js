@@ -64,7 +64,7 @@ export default class World {
 
   findOfrendaPosition() {
     // defaults to center of room if not found
-    this.flockTarget = { x: this.cellSize * 5, y: this.cellSize * 15 };
+    this.flockTarget = { x: this.cellSize * 15, y: this.cellSize * 5 };
 
     for (const wall of this.walls) {
       if (wall.type === 'ofrenda') {
@@ -138,10 +138,26 @@ export default class World {
 
         // Update souls
         if (this.flockTarget) {
-          this.souls.forEach(soul => {
+          // Update souls and handle collisions
+          for (let i = this.souls.length - 1; i >= 0; i--) {
+            const soul = this.souls[i];
             soul.flock(this.souls, this.flockTarget);
             soul.update(deltaTime);
-          });
+
+            // Check wall collisions
+            for (const wall of this.walls) {
+              if (soul.intersects(wall)) {
+                if (wall.type === 'ofrenda') {
+                  // Soul has reached the ofrenda - remove it
+                  this.souls.splice(i, 1);
+                  break;
+                } else {
+                  // Bounce off other walls
+                  soul.bounce(wall);
+                }
+              }
+            }
+          }
         }
 
         break;

@@ -190,4 +190,41 @@ export default class Soul extends Sprite {
     }
     return sum;
   }
+
+  // Bounce off walls
+  bounce(wall) {
+    const bounds = this.getBounds();
+    const wallBounds = wall.getBounds();
+
+    // Calculate overlap
+    const overlapX = Math.min(bounds.right - wallBounds.left, wallBounds.right - bounds.left);
+    const overlapY = Math.min(bounds.bottom - wallBounds.top, wallBounds.bottom - bounds.top);
+
+    // Bounce in direction of smallest overlap
+    if (overlapX < overlapY) {
+      this.velocity.x *= -1;
+      if (bounds.left < wallBounds.left) {
+        this.x = wallBounds.left - this.width;
+      } else {
+        this.x = wallBounds.right;
+      }
+    } else {
+      this.velocity.y *= -1;
+      if (bounds.top < wallBounds.top) {
+        this.y = wallBounds.top - this.height;
+      } else {
+        this.y = wallBounds.bottom;
+      }
+    }
+  }
+
+  // Get bounds for collision detection
+  getBounds() {
+    return {
+      left: this.x,
+      right: this.x + this.width,
+      top: this.y,
+      bottom: this.y + this.height
+    };
+  }
 }
