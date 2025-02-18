@@ -28,20 +28,27 @@ export default class ManualGenerator extends BaseGenerator {
   }
 
   generateRoom(x, y) {
-    const room = [];
+    const walls = [];
     const startY = y * 10;
     const startX = x * 10;
 
     // Extract 10x10 section from the full map
     for (let i = 0; i < 10; i++) {
-      room[i] = [];
       for (let j = 0; j < 10; j++) {
         const mapY = startY + i;
         const mapX = startX + j;
-        room[i][j] = this.fullMap[mapY]?.[mapX] || '#';
+        const cell = this.fullMap[mapY]?.[mapX] || '#';
+        
+        if (cell === '#') {
+          walls.push(this.createWall(x, y, j, i, 'wall'));
+        } else if (cell === '1' || cell === '2' || cell === '3') {
+          walls.push(this.createWall(x, y, j, i, `door${cell}`));
+        } else if (cell === 'E') {
+          walls.push(this.createWall(x, y, j, i, 'exit'));
+        }
       }
     }
 
-    return room.map(row => row.join(''));
+    return walls;
   }
 }

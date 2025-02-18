@@ -44,56 +44,12 @@ export default class World {
   }
 
   loadCurrentRoom() {
-    this.walls = [];
-    const roomLayout = this.rooms[this.gridY][this.gridX];
-
-    // Calculate offset to center the room
-    const offsetX = (this.width - 10 * this.cellSize) / 2;
-    const offsetY = (this.height - 10 * this.cellSize) / 2;
+    // Load walls directly from room generator
+    this.walls = this.rooms[this.gridY][this.gridX];
 
     // Load items for current room
     const roomKey = `${this.gridX},${this.gridY}`;
     this.items = this.roomItems[roomKey] || [];
-
-    for (let y = 0; y < roomLayout.length; y++) {
-      for (let x = 0; x < roomLayout[y].length; x++) {
-        const cell = roomLayout[y][x];
-        if (cell === '#') {
-          // Regular wall
-          this.walls.push(
-            new Wall(
-              offsetX + x * this.cellSize,
-              offsetY + y * this.cellSize,
-              this.cellSize,
-              this.cellSize,
-              '#333'
-            )
-          );
-        } else if (cell === '1' || cell === '2' || cell === '3') {
-          // Security doors
-          this.walls.push(
-            new Wall(
-              offsetX + x * this.cellSize,
-              offsetY + y * this.cellSize,
-              this.cellSize,
-              this.cellSize,
-              `door${cell}`
-            )
-          );
-        } else if (cell === 'E') {
-          // Exit
-          this.walls.push(
-            new Wall(
-              offsetX + x * this.cellSize,
-              offsetY + y * this.cellSize,
-              this.cellSize,
-              this.cellSize,
-              'exit'
-            )
-          );
-        }
-      }
-    }
 
     // Ensure player starts in a safe position in new room
     this.resolveCollisions(this.player);
