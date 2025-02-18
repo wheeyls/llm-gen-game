@@ -186,6 +186,9 @@ export default class BigSoul extends Soul {
     ctx.restore();
   }
 
+  frighten() {
+  }
+
   bounce(wall) {
     if (!this.confused) {
       this.velocity.x = 0;

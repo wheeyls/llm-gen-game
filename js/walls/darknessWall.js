@@ -26,7 +26,7 @@ export default class DarknessWall extends Wall {
   }
 
   collideWithSoul(soul) {
-    soul.bounce(this); // scares souls
+    soul.frighten(this); // scares souls
     return false; // not solid to souls
   }
 
