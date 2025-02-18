@@ -130,7 +130,7 @@ export default class Soul extends Sprite {
   }
 
   getSeparation(souls) {
-    const desiredSeparation = 25;
+    const desiredSeparation = 50;
     const steer = { x: 0, y: 0 };
     let count = 0;
 
@@ -238,15 +238,17 @@ export default class Soul extends Sprite {
       }
     }
 
-    // Enter confused state with high intensity
-    this.confused = true;
-    this.confusionTimer = 0;
-    this.confusionIntensity = 3.0; // Start with high confusion
-    // Bounce away from wall at higher speed
-    this.velocity.x *= -1.2;
-    this.velocity.y *= -1.2;
-    this.wanderAngle = Math.atan2(this.velocity.y, this.velocity.x) + 
-                       (Math.random() - 0.5) * Math.PI; // Random deviation
+    if (!this.confused) {
+      // Enter confused state with high intensity
+      this.confused = true;
+      this.confusionTimer = 0;
+      this.confusionIntensity = 3.0; // Start with high confusion
+      // Bounce away from wall at higher speed
+      this.velocity.x *= -1.2;
+      this.velocity.y *= -1.2;
+      this.wanderAngle = Math.atan2(this.velocity.y, this.velocity.x) + 
+                         (Math.random() - 0.5) * Math.PI; // Random deviation
+    }
   }
 
   // Get bounds for collision detection

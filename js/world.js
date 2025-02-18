@@ -16,6 +16,7 @@ export default class World {
     this.entities = [];
     this.walls = [];
     this.items = [];
+    this.soulCount = 5;
     this.souls = [];
     this.ofrendaPosition = null;
     this.inventory = new Array(5).fill(null);
@@ -56,7 +57,6 @@ export default class World {
 
     // Find ofrenda and spawn souls
     this.findOfrendaPosition();
-    this.spawnSoulsAtPortals();
 
     // Ensure player starts in a safe position in new room
     this.resolveCollisions(this.player);
@@ -70,7 +70,7 @@ export default class World {
       if (wall.type === 'ofrenda') {
         this.flockTarget = {
           x: wall.x + wall.width / 2,
-          y: wall.y + wall.height / 2
+          y: wall.y + wall.height / 2,
         };
         return;
       }
@@ -78,13 +78,30 @@ export default class World {
   }
 
   spawnSoulsAtPortals() {
-    for (const wall of this.walls) {
-      if (wall.type === 'portal') {
-        // Add random offset to prevent exact overlap
+    const wall = this.walls.find(wall => wall.type === 'portal');
+
+    if (!wall) {
+      return;
+    }
+
+    if (this.souls.length < this.soulCount) {
+      // Check if spawn point is clear
+      const spawnBounds = wall.getBounds();
+      const expandedBounds = {
+        left: spawnBounds.left - this.cellSize,
+        right: spawnBounds.right + this.cellSize,
+        top: spawnBounds.top - this.cellSize,
+        bottom: spawnBounds.bottom + this.cellSize,
+      };
+      const isClear = !this.souls.find(soul => this.intersects(soul.getBounds(), expandedBounds));
+      debugger;
+
+      if (isClear) {
         const soul = new Soul(
           wall.x + wall.width * 1.1 + (Math.random() - 0.5) * 20,
           wall.y + (Math.random() - 0.5) * 20
         );
+
         this.souls.push(soul);
       }
     }
@@ -131,6 +148,7 @@ export default class World {
 
   update(deltaTime) {
     this.handleInput(this.game.input);
+    this.spawnSoulsAtPortals();
     switch (this.state.current) {
       case GameState.EXPLORING:
         // Check for item collision
@@ -197,7 +215,7 @@ export default class World {
 
   draw(ctx) {
     // Fill with warm background color
-    ctx.fillStyle = '#FDF6E3';  // Soft cream background
+    ctx.fillStyle = '#FDF6E3'; // Soft cream background
     ctx.fillRect(0, 0, this.width, this.height);
 
     // Draw walls
