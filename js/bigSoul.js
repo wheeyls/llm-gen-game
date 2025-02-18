@@ -24,12 +24,12 @@ export default class BigSoul extends Soul {
     const separation = this.getSeparation(souls);
     
     if (this.confused) {
-      this.rotation += this.confusionIntensity * 0.1;
       this.shakeAmount = Math.sin(Date.now() / 50) * this.confusionIntensity * 3;
       
+      // Wander away from target more deliberately
       const angleFromTarget = Math.atan2(this.y - target.y, this.x - target.x);
-      this.velocity.x = Math.cos(angleFromTarget) * 0.3;
-      this.velocity.y = Math.sin(angleFromTarget) * 0.3;
+      this.velocity.x = Math.cos(angleFromTarget) * 0.5;
+      this.velocity.y = Math.sin(angleFromTarget) * 0.5;
       return;
     }
 
@@ -100,7 +100,7 @@ export default class BigSoul extends Soul {
         this.x + this.width/2 + this.shakeAmount,
         this.y + this.height/2 + this.shakeAmount
       );
-      ctx.rotate(this.rotation);
+      ctx.rotate(this.targetRotation); // Keep facing same direction while confused
     } else {
       ctx.translate(this.x + this.width/2, this.y + this.height/2);
       ctx.rotate(this.rotation);
