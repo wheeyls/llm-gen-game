@@ -54,8 +54,17 @@ export default class PathFinder {
         worldBounds: bounds,
         wall: collision
       });
-      // Allow walking to ofrenda
-      return collision.type === 'ofrenda';
+      // Allow walking to ofrenda, but not through other walls
+      if (collision.type === 'ofrenda') {
+        const targetBounds = {
+          left: this.world.flockTarget.x - this.gridSize/2,
+          right: this.world.flockTarget.x + this.gridSize/2,
+          top: this.world.flockTarget.y - this.gridSize/2,
+          bottom: this.world.flockTarget.y + this.gridSize/2
+        };
+        return this.world.intersects(collision.getBounds(), targetBounds);
+      }
+      return false;
     }
 
     return true;
@@ -98,11 +107,23 @@ export default class PathFinder {
       gridEnd: end
     });
 
+    // Always allow end position if it's the ofrenda
+    const endWall = this.world.walls.find(wall => 
+      this.world.intersects(wall.getBounds(), {
+        left: endX - this.gridSize/2,
+        right: endX + this.gridSize/2,
+        top: endY - this.gridSize/2,
+        bottom: endY + this.gridSize/2
+      })
+    );
+
     if (!this.isWalkable(start.x, start.y)) {
       console.log('Start position not walkable:', start);
       return null;
     }
-    if (!this.isWalkable(end.x, end.y)) {
+    
+    // Allow pathfinding to ofrenda
+    if (!this.isWalkable(end.x, end.y) && (!endWall || endWall.type !== 'ofrenda')) {
       console.log('End position not walkable:', end);
       return null;
     }
