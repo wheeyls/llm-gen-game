@@ -1,15 +1,24 @@
 import BaseGenerator from './baseGenerator.js';
 
+// Wall type symbols:
+// # - basic wall
+// D - darkness wall
+// F - forgotten wall
+// V - void wall
+// C - confusion wall
+// O - ofrenda/altar wall
+// 1,2,3 - numbered doors
+// E - exit
 const DEBUG_MAP = `
 ###############################
 #     1  ##     2  ##     3  E
-#   ###  ##   ###  ##   ###  #
-#   #    ##   #    ##   #    #
+#   DDD  ##   FFF  ##   VVV  #
+#   D    ##   F    ##   V    #
 #####    ######    ######    #
 #                            #
-#        ##        ##        #
-#        ##        ##        #
-#        ##        ##        #
+#   C    ##   O    ##        #
+#   C    ##   O    ##        #
+#   C    ##   O    ##        #
 ##############################`;
 
 export default class ManualGenerator extends BaseGenerator {
@@ -39,12 +48,22 @@ export default class ManualGenerator extends BaseGenerator {
         const mapX = startX + j;
         const cell = this.fullMap[mapY]?.[mapX] || '#';
         
-        if (cell === '#') {
-          walls.push(this.createWall(x, y, j, i, 'wall'));
-        } else if (cell === '1' || cell === '2' || cell === '3') {
-          walls.push(this.createWall(x, y, j, i, `door${cell}`));
-        } else if (cell === 'E') {
-          walls.push(this.createWall(x, y, j, i, 'exit'));
+        // Convert ASCII symbols to wall types
+        const wallType = {
+          '#': 'wall',
+          'D': 'darkness',
+          'F': 'forgotten',
+          'V': 'void',
+          'C': 'confusion',
+          'O': 'ofrenda',
+          '1': 'door1',
+          '2': 'door2',
+          '3': 'door3',
+          'E': 'exit'
+        }[cell];
+        
+        if (wallType) {
+          walls.push(this.createWall(x, y, j, i, wallType));
         }
       }
     }
