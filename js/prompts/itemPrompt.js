@@ -6,17 +6,17 @@ export default class ItemPrompt extends BasePrompt {
     this.item = item;
     this.title = `Found: ${this.item.type}`;
     this.subtitle = null;
-    this.options = Array.from({ length: 5 }, (_, i) => ({
-      text: `Slot ${i + 1}`,
-      action: `slot${i}`,
-    }));
+    this.options = [{
+      text: 'Take Item',
+      action: 'slot0',
+    }];
   }
 
   handleInput(input) {
-    // Handle number key shortcuts (1-5)
-    const number = input.oneOf('1', '2', '3', '4', '5');
+    // Handle number key shortcut (1)
+    const number = input.oneOf('1');
     if (number) {
-      const slot = parseInt(number) - 1;
+      const slot = 0;
       this.selectedIndex = slot;
       this.hide();
       return { action: 'confirm', value: slot };
