@@ -1,7 +1,7 @@
 import Sprite from './sprite.js';
 import Wall from './wall.js';
 import Item from './item.js';
-import Soul from './soul.js';
+import BigSoul from './bigSoul.js';
 import ItemPrompt from './prompts/itemPrompt.js';
 import ExitPrompt from './prompts/exitPrompt.js';
 import GameState from './gameState.js';
@@ -97,9 +97,9 @@ export default class World {
       debugger;
 
       if (isClear) {
-        const soul = new Soul(
-          wall.x + wall.width * 1.1 + (Math.random() - 0.5) * 20,
-          wall.y + (Math.random() - 0.5) * 20
+        const soul = new BigSoul(
+          wall.x + wall.width * 1.1 + (Math.random() - 0.5) * 10,
+          wall.y + (Math.random() - 0.5) * 10
         );
 
         this.souls.push(soul);
