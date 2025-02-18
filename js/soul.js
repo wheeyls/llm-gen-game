@@ -8,16 +8,27 @@ export default class Soul extends Sprite {
     this.maxSpeed = 2;
     this.trail = [];
     this.maxTrailLength = 10;
+    this.confused = false;
+    this.confusionTimer = 0;
+    this.confusionDuration = 2000; // 2 seconds of confusion
+    this.wanderAngle = Math.random() * Math.PI * 2;
   }
 
   flock(souls, target) {
-    const separation = this.getSeparation(souls);
-    const cohesion = this.getCohesion(souls);
-    const alignment = this.getAlignment(souls);
-    const seek = this.seek(target);
+    if (this.confused) {
+      // Wander randomly when confused
+      this.wanderAngle += (Math.random() - 0.5) * 0.5;
+      this.velocity.x += Math.cos(this.wanderAngle) * 0.1;
+      this.velocity.y += Math.sin(this.wanderAngle) * 0.1;
+    } else {
+      const separation = this.getSeparation(souls);
+      const cohesion = this.getCohesion(souls);
+      const alignment = this.getAlignment(souls);
+      const seek = this.seek(target);
 
-    this.velocity.x += separation.x * 0.5 + cohesion.x * 0.3 + alignment.x * 0.2 + seek.x * 0.8;
-    this.velocity.y += separation.y * 0.5 + cohesion.y * 0.3 + alignment.y * 0.2 + seek.y * 0.8;
+      this.velocity.x += separation.x * 0.5 + cohesion.x * 0.3 + alignment.x * 0.2 + seek.x * 0.8;
+      this.velocity.y += separation.y * 0.5 + cohesion.y * 0.3 + alignment.y * 0.2 + seek.y * 0.8;
+    }
 
     const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
     if (speed > this.maxSpeed) {
@@ -26,7 +37,15 @@ export default class Soul extends Sprite {
     }
   }
 
-  update() {
+  update(deltaTime) {
+    if (this.confused) {
+      this.confusionTimer += deltaTime;
+      if (this.confusionTimer >= this.confusionDuration) {
+        this.confused = false;
+        this.confusionTimer = 0;
+      }
+    }
+
     this.x += this.velocity.x;
     this.y += this.velocity.y;
 
@@ -202,20 +221,25 @@ export default class Soul extends Sprite {
 
     // Bounce in direction of smallest overlap
     if (overlapX < overlapY) {
-      this.velocity.x *= -1;
+      this.velocity.x *= -0.5; // Reduce bounce velocity
       if (bounds.left < wallBounds.left) {
         this.x = wallBounds.left - this.width;
       } else {
         this.x = wallBounds.right;
       }
     } else {
-      this.velocity.y *= -1;
+      this.velocity.y *= -0.5; // Reduce bounce velocity
       if (bounds.top < wallBounds.top) {
         this.y = wallBounds.top - this.height;
       } else {
         this.y = wallBounds.bottom;
       }
     }
+
+    // Enter confused state
+    this.confused = true;
+    this.confusionTimer = 0;
+    this.wanderAngle = Math.atan2(this.velocity.y, this.velocity.x) + Math.PI;
   }
 
   // Get bounds for collision detection
