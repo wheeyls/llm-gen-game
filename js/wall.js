@@ -47,6 +47,12 @@ export default class Wall extends Sprite {
         ctx.translate(0, -size/2);
         DayOfTheDeadDrawings.sugarSkull(ctx, size/2);
         break;
+      case 'portal':
+        // Draw spirit portal
+        DayOfTheDeadDrawings.sugarSkull(ctx, size);
+        ctx.rotate(Math.PI / 4);
+        DayOfTheDeadDrawings.papelPicado(ctx, size * 1.2, DayOfTheDeadDrawings.colors.purple);
+        break;
     }
 
     ctx.restore();
